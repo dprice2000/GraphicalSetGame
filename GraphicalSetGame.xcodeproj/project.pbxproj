@@ -12,6 +12,9 @@
 		8E584CB123D708970000F9CC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8E584CAF23D708970000F9CC /* Main.storyboard */; };
 		8E584CB323D7089A0000F9CC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8E584CB223D7089A0000F9CC /* Assets.xcassets */; };
 		8E584CB623D7089A0000F9CC /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8E584CB423D7089A0000F9CC /* LaunchScreen.storyboard */; };
+		8E584CC123D70CC50000F9CC /* SetGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E584CC023D70CC40000F9CC /* SetGame.swift */; };
+		8E584CC323D70CC90000F9CC /* SetDeck.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E584CC223D70CC90000F9CC /* SetDeck.swift */; };
+		8E584CC523D70D7B0000F9CC /* SetCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E584CC423D70D7B0000F9CC /* SetCard.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,6 +25,9 @@
 		8E584CB223D7089A0000F9CC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8E584CB523D7089A0000F9CC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8E584CB723D7089A0000F9CC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8E584CC023D70CC40000F9CC /* SetGame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SetGame.swift; path = /Volumes/dp/development/GraphicalSetGame/GraphicalSetGame/SetGame.swift; sourceTree = "<absolute>"; };
+		8E584CC223D70CC90000F9CC /* SetDeck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SetDeck.swift; path = /Volumes/dp/development/GraphicalSetGame/GraphicalSetGame/SetDeck.swift; sourceTree = "<absolute>"; };
+		8E584CC423D70D7B0000F9CC /* SetCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SetCard.swift; path = /Volumes/dp/development/GraphicalSetGame/GraphicalSetGame/SetCard.swift; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -54,14 +60,25 @@
 		8E584CAA23D708970000F9CC /* GraphicalSetGame */ = {
 			isa = PBXGroup;
 			children = (
-				8E584CAB23D708970000F9CC /* AppDelegate.swift */,
+				8E584CC423D70D7B0000F9CC /* SetCard.swift */,
+				8E584CC223D70CC90000F9CC /* SetDeck.swift */,
+				8E584CC023D70CC40000F9CC /* SetGame.swift */,
+				8E584CBD23D708DE0000F9CC /* Supporting Files */,
 				8E584CAD23D708970000F9CC /* ViewController.swift */,
 				8E584CAF23D708970000F9CC /* Main.storyboard */,
 				8E584CB223D7089A0000F9CC /* Assets.xcassets */,
-				8E584CB423D7089A0000F9CC /* LaunchScreen.storyboard */,
 				8E584CB723D7089A0000F9CC /* Info.plist */,
 			);
 			path = GraphicalSetGame;
+			sourceTree = "<group>";
+		};
+		8E584CBD23D708DE0000F9CC /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				8E584CAB23D708970000F9CC /* AppDelegate.swift */,
+				8E584CB423D7089A0000F9CC /* LaunchScreen.storyboard */,
+			);
+			path = "Supporting Files";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -135,8 +152,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8E584CC523D70D7B0000F9CC /* SetCard.swift in Sources */,
 				8E584CAE23D708970000F9CC /* ViewController.swift in Sources */,
+				8E584CC123D70CC50000F9CC /* SetGame.swift in Sources */,
 				8E584CAC23D708970000F9CC /* AppDelegate.swift in Sources */,
+				8E584CC323D70CC90000F9CC /* SetDeck.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

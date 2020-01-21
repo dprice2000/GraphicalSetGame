@@ -2,6 +2,15 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:/Volumes/dp/development/GraphicalSetGame/GraphicalSetGame/SetCard.swift">
+   </FileRef>
+   <FileRef
+      location = "group:/Volumes/dp/development/GraphicalSetGame/GraphicalSetGame/SetDeck.swift">
+   </FileRef>
+   <FileRef
+      location = "group:/Volumes/dp/development/GraphicalSetGame/GraphicalSetGame/SetGame.swift">
+   </FileRef>
+   <FileRef
       location = "self:GraphicalSetGame.xcodeproj">
    </FileRef>
 </Workspace>
