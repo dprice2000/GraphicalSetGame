@@ -6,6 +6,8 @@
 //  Copyright © 2020 Dave. All rights reserved.
 //
 
+// draw one card
+
 import UIKit
 
 @IBDesignable
@@ -13,7 +15,7 @@ class SetCardView: UIView {
 
     override func draw(_ rect: CGRect) {
         let cardBackground = UIBezierPath(rect: bounds)
-        UIColor.orange.setFill()
+        UIColor.blue.setFill()
         cardBackground.fill()
         let roundedRect = UIBezierPath(roundedRect: bounds, cornerRadius: cornerRadius)
         roundedRect.addClip()

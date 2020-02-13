@@ -6,16 +6,20 @@
 //  Copyright © 2020 Dave. All rights reserved.
 //
 
+// if I'm in portrait mode, stack my buttons
+// if I'm in landscape mode, my buttons are side by side
+
 import UIKit
 
+@IBDesignable
 class SetGameButtonView: UIView {
 
-    /*
-    // Only override draw() if you perform custom drawing.
-    // An empty implementation adversely affects performance during animation.
     override func draw(_ rect: CGRect) {
         // Drawing code
+        let boardBackground = UIBezierPath(rect: bounds)
+        UIColor.green.setFill()
+        boardBackground.fill()
+
     }
-    */
 
 }

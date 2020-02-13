@@ -6,38 +6,28 @@
 //  Copyright © 2020 Dave. All rights reserved.
 //
 
+//  portrait mode: buttons stacked
+//  landscape mode: buttons side by side
+
 import UIKit
 
 @IBDesignable
 class SetGameView: UIView {
     
-    private var grid = Grid(layout: Grid.Layout.dimensions(rowCount: 3, columnCount: 4))
-
-    private var cardViews = [SetCardView]()
-    
     override func draw(_ rect: CGRect) {
         // Drawing code
-        let boardBackground = UIBezierPath(rect: bounds)
-        UIColor.orange.setFill()
-        boardBackground.fill()
-        grid.frame = bounds
         
-        if cardViews.count == 0 {
-        for _ in 0 ..< grid.cellCount {
-            let aSetCardView = SetCardView()
-                cardViews.append(aSetCardView)
-        }
-        }
+        let (setGameBoardBounds, setGameButtonBounds) = bounds.divided(atDistance: boardBoundry, from: CGRectEdge.minYEdge)
+
+        let aSetGameBoardView = SetGameBoardView(frame: setGameBoardBounds)
+        let aSetGameButtonView = SetGameButtonView(frame: setGameButtonBounds)
         
         for subView in subviews {
             subView.removeFromSuperview()
         }
         
-        for cardViewIndex in cardViews.indices {
-            let cardView = cardViews[cardViewIndex]
-            cardView.frame = grid[cardViewIndex]!.zoom(by: 0.95)
-            addSubview(cardViews[cardViewIndex])
-        }
+        addSubview(aSetGameBoardView)
+        addSubview(aSetGameButtonView)
     }
 
     
@@ -74,8 +64,12 @@ extension SetGameView {
     private struct SizeRatio {
         static let cornerRadiusToBoundsHeight: CGFloat = 0.06
         static let cornerOffsetToCornerRadius: CGFloat = 0.33
+        static let boardHeightToBoundsRatio: CGFloat = 0.75
     }
     private var cornerRadius: CGFloat {
         return bounds.size.height * SizeRatio.cornerRadiusToBoundsHeight
+    }
+    private var boardBoundry: CGFloat {
+        return bounds.size.height * SizeRatio.boardHeightToBoundsRatio
     }
 }
