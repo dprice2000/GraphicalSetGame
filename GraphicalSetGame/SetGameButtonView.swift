@@ -20,30 +20,52 @@ class SetGameButtonView: UIView {
         let boardBackground = UIBezierPath(rect: bounds)
         UIColor.green.setFill()
         boardBackground.fill()
+ // blow away sub views?
+        let attributes:[NSAttributedString.Key:Any] = [
+            .foregroundColor: UIColor.red,
+            .font:UIFont(name: scoreLabel.font.fontName, size: 30.0)!
+        ]  // better way to make it a different size??
         
-        let (draw3CardsButtonBounds, remainingBounds) = bounds.divided(atDistance: bounds.size.height * 0.33, from: CGRectEdge.minYEdge)
-        let (newGameButtonBounds, scoreLabelBounds) = remainingBounds.divided(atDistance: remainingBounds.size.height * 0.50 , from: CGRectEdge.minYEdge)
-        
+        var draw3CardsButtonBounds : CGRect
+        var newGameButtonBounds : CGRect
+        var remainingBounds : CGRect
+        var scoreLabelBounds : CGRect
+
+        if UIScreen.main.bounds.width < UIScreen.main.bounds.height  {
+            (draw3CardsButtonBounds, remainingBounds) = bounds.divided(atDistance: bounds.size.height * 0.33, from: CGRectEdge.minYEdge)
+            (newGameButtonBounds, scoreLabelBounds) = remainingBounds.divided(atDistance: remainingBounds.size.height * 0.50 , from: CGRectEdge.minYEdge)
+        } else {
+            (scoreLabelBounds, remainingBounds) = bounds.divided(atDistance: bounds.size.width * 0.33 , from: CGRectEdge.minXEdge)
+            (draw3CardsButtonBounds, newGameButtonBounds) = remainingBounds.divided(atDistance: remainingBounds.size.width * 0.50 , from: CGRectEdge.minXEdge)
+
+        }
+
+        var myAttributedString = NSMutableAttributedString(string: "Draw 3 Cards", attributes: attributes)
+
         let draw3CardsButton = UIButton(type: .custom)
         let draw3CardsButtonCustomView = UIView(frame: draw3CardsButtonBounds)
         draw3CardsButtonCustomView.isUserInteractionEnabled = false
         draw3CardsButton.frame = draw3CardsButtonBounds
-        draw3CardsButton.setTitle("draw 3 cards", for: UIControl.State.normal)
+        draw3CardsButton.setAttributedTitle(myAttributedString, for: UIControl.State.normal)
         draw3CardsButton.addSubview(draw3CardsButtonCustomView)
         draw3CardsButton.addTarget(self, action: #selector(draw3CardsAction), for: .touchUpInside)
         addSubview(draw3CardsButton)
-
+        
+        myAttributedString = NSMutableAttributedString(string: "Start New Game", attributes: attributes)
         let newGameButton = UIButton(type: .custom)
         let newGameButtonCustomView = UIView(frame: newGameButtonBounds)
-        newGameButtonCustomView.isUserInteractionEnabled = false
+        newGameButtonCustomView.isUserInteractionEnabled = false // why?
         newGameButton.frame = newGameButtonBounds
-        newGameButton.setTitle("start new game", for: UIControl.State.normal)
+        newGameButton.setAttributedTitle(myAttributedString, for: UIControl.State.normal)
         newGameButton.addSubview(newGameButtonCustomView)
         newGameButton.addTarget(self, action: #selector(newGameAction), for: .touchUpInside)
         addSubview(newGameButton)
         
+        
+        myAttributedString = NSMutableAttributedString(string: "Score: 0", attributes: attributes)
         scoreLabel.frame = scoreLabelBounds
-        scoreLabel.text = "score: 0"
+        scoreLabel.attributedText = myAttributedString
+        scoreLabel.textAlignment = NSTextAlignment.center
         addSubview(scoreLabel)
     }
     
