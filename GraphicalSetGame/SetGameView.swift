@@ -21,15 +21,14 @@ class SetGameView: UIView {
 
         let aSetGameBoardView = SetGameBoardView(frame: setGameBoardBounds)
         let aSetGameButtonView = SetGameButtonView(frame: setGameButtonBounds)
-        
+
         for subView in subviews {
             subView.removeFromSuperview()
         }
-        
+
         addSubview(aSetGameBoardView)
         addSubview(aSetGameButtonView)
     }
-
     
 } // setGameView
 
@@ -62,14 +61,28 @@ extension CGPoint {
 
 extension SetGameView {
     private struct SizeRatio {
-        static let cornerRadiusToBoundsHeight: CGFloat = 0.06
-        static let cornerOffsetToCornerRadius: CGFloat = 0.33
+//        static let cornerRadiusToBoundsHeight: CGFloat = 0.06
+//        static let cornerOffsetToCornerRadius: CGFloat = 0.33
         static let boardHeightToBoundsRatio: CGFloat = 0.75
     }
-    private var cornerRadius: CGFloat {
-        return bounds.size.height * SizeRatio.cornerRadiusToBoundsHeight
-    }
+//    private var cornerRadius: CGFloat {
+//        return bounds.size.height * SizeRatio.cornerRadiusToBoundsHeight
+//    }
+
     private var boardBoundry: CGFloat {
         return bounds.size.height * SizeRatio.boardHeightToBoundsRatio
     }
+}
+
+extension UIView {
+    func findViewController() -> UIViewController? {
+        if let nextResponder = self.next as? UIViewController {
+            return nextResponder
+        } else if let nextResponder = self.next as? UIView {
+            return nextResponder.findViewController()
+        } else {
+            return nil
+        }
+    }
+    
 }

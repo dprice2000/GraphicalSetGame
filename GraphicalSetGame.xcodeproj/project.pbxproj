@@ -12,7 +12,7 @@
 		8E2B08CA23F4A97B00978CB4 /* SetGameBoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E2B08C923F4A97B00978CB4 /* SetGameBoardView.swift */; };
 		8E2B08CC23F4A99C00978CB4 /* SetGameButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E2B08CB23F4A99C00978CB4 /* SetGameButtonView.swift */; };
 		8E584CAC23D708970000F9CC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E584CAB23D708970000F9CC /* AppDelegate.swift */; };
-		8E584CAE23D708970000F9CC /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E584CAD23D708970000F9CC /* ViewController.swift */; };
+		8E584CAE23D708970000F9CC /* SetGameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E584CAD23D708970000F9CC /* SetGameViewController.swift */; };
 		8E584CB123D708970000F9CC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8E584CAF23D708970000F9CC /* Main.storyboard */; };
 		8E584CB323D7089A0000F9CC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8E584CB223D7089A0000F9CC /* Assets.xcassets */; };
 		8E584CB623D7089A0000F9CC /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8E584CB423D7089A0000F9CC /* LaunchScreen.storyboard */; };
@@ -29,7 +29,7 @@
 		8E2B08CB23F4A99C00978CB4 /* SetGameButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetGameButtonView.swift; sourceTree = "<group>"; };
 		8E584CA823D708960000F9CC /* GraphicalSetGame.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GraphicalSetGame.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8E584CAB23D708970000F9CC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		8E584CAD23D708970000F9CC /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		8E584CAD23D708970000F9CC /* SetGameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetGameViewController.swift; sourceTree = "<group>"; };
 		8E584CB023D708970000F9CC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		8E584CB223D7089A0000F9CC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8E584CB523D7089A0000F9CC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -70,16 +70,16 @@
 		8E584CAA23D708970000F9CC /* GraphicalSetGame */ = {
 			isa = PBXGroup;
 			children = (
-				8E2456CF23F129D30011AE80 /* Grid.swift */,
 				8E584CBD23D708DE0000F9CC /* Supporting Files */,
+				8E2456CF23F129D30011AE80 /* Grid.swift */,
 				8E584CC423D70D7B0000F9CC /* SetCard.swift */,
 				8E584CC223D70CC90000F9CC /* SetDeck.swift */,
 				8E584CC023D70CC40000F9CC /* SetGame.swift */,
-				8ECC81EC23D7138800B3B880 /* SetGameView.swift */,
-				8E584CAD23D708970000F9CC /* ViewController.swift */,
+				8E584CAD23D708970000F9CC /* SetGameViewController.swift */,
 				8E584CAF23D708970000F9CC /* Main.storyboard */,
 				8E584CB723D7089A0000F9CC /* Info.plist */,
 				8E274DE123F41E7800697B59 /* SetCardView.swift */,
+				8ECC81EC23D7138800B3B880 /* SetGameView.swift */,
 				8E2B08C923F4A97B00978CB4 /* SetGameBoardView.swift */,
 				8E2B08CB23F4A99C00978CB4 /* SetGameButtonView.swift */,
 			);
@@ -168,7 +168,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8E584CC523D70D7B0000F9CC /* SetCard.swift in Sources */,
-				8E584CAE23D708970000F9CC /* ViewController.swift in Sources */,
+				8E584CAE23D708970000F9CC /* SetGameViewController.swift in Sources */,
 				8E584CC123D70CC50000F9CC /* SetGame.swift in Sources */,
 				8E2456D023F129D40011AE80 /* Grid.swift in Sources */,
 				8E2B08CA23F4A97B00978CB4 /* SetGameBoardView.swift in Sources */,

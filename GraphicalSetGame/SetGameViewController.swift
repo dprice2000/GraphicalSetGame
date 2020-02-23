@@ -8,15 +8,23 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class SetGameViewController: UIViewController {
 
+    @IBOutlet weak var mainViewOutlet: SetGameView!
+    
     private lazy var game = SetGame(boardSize: 12)
-
+    var clickCount = 0
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
     }
 
+    func incrementClickCount() -> Int {
+        clickCount += 1
+        return clickCount
+    }
 
+    
 }
 
