@@ -18,7 +18,7 @@ struct SetGame {
     
 
     init(boardSize: Int) {
-        for _ in 1...12 {
+        for _ in 1...boardSize {
             if let aCard = gameDeck.draw() { drawnCards.append( aCard ) } // or throw an error?
         }
         self.boardSize = boardSize
@@ -50,7 +50,7 @@ struct SetGame {
             replaceMatchedCards()
             return
         }
-        if drawnCards.count + 3 > boardSize { return }  // do not overfill the board
+//        if drawnCards.count + 3 > boardSize { return }  // do not overfill the board
         for _ in 1...3 {
             if let aCard = gameDeck.draw() { drawnCards.append(aCard) }
         }
@@ -140,5 +140,9 @@ struct SetGame {
             if let aCard = gameDeck.draw() { drawnCards.append( aCard ) } 
         }
     } // startNewGame()
+    
+    func getAttributesFromCardID(cardID: Int) -> (myShape: SetCard.Shape, myShading: SetCard.Shading, myPipCount: SetCard.PipCount, myCardColor: SetCard.CardColor) {
+        return drawnCards[cardID].getCardAttributes()   
+    }
     
 } // SetGame()

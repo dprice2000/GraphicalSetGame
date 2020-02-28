@@ -17,7 +17,12 @@ class SetGameButtonView: UIView {
     private lazy var attributes:[NSAttributedString.Key:Any] = [
         .foregroundColor: UIColor.red,
         .font:UIFont(name: scoreLabel.font.fontName, size: 30.0)!
-    ]  // better way to make it a different size??
+    ]  // better way to get the fontName? look in playing card example
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        setNeedsLayout()
+        setNeedsDisplay()
+    }
 
     override func draw(_ rect: CGRect) {
         // Drawing code
@@ -28,7 +33,7 @@ class SetGameButtonView: UIView {
         let attributes:[NSAttributedString.Key:Any] = [
             .foregroundColor: UIColor.red,
             .font:UIFont(name: scoreLabel.font.fontName, size: 30.0)!
-        ]  // better way to make it a different size??
+        ]  // better way to get fontName?
         
         var draw3CardsButtonBounds : CGRect
         var newGameButtonBounds : CGRect
@@ -64,8 +69,8 @@ class SetGameButtonView: UIView {
         newGameButton.addTarget(self, action: #selector(newGameAction), for: .touchUpInside)
         addSubview(newGameButton)
         
-        if let aSGVC = findViewController() as? SetGameViewController {
-            myAttributedString = NSMutableAttributedString(string: "Score: \(aSGVC.clickCount)", attributes: attributes)
+        if let mySGVC = findViewController() as? SetGameViewController {
+            myAttributedString = NSMutableAttributedString(string: "Score: \(mySGVC.clickCount)", attributes: attributes)
             scoreLabel.attributedText = myAttributedString
         } else {
             myAttributedString = NSMutableAttributedString(string: "Score: 0", attributes: attributes)
@@ -78,17 +83,17 @@ class SetGameButtonView: UIView {
     
     @objc
     func draw3CardsAction() {
-        if let aSGVC = findViewController() as? SetGameViewController {
-            let myAttributedString = NSMutableAttributedString(string: "Score: \(aSGVC.incrementClickCount())", attributes: attributes)
-            scoreLabel.attributedText = myAttributedString
+        if let mySGVC = findViewController() as? SetGameViewController {
+            mySGVC.performDraw3Cards()
+            mySGVC.updateViewFromModel()
         }
         print("Click Draw 3 Cards")
     }
     
     @objc
     func newGameAction() {
-        if let aSGVC = findViewController() as? SetGameViewController {
-            let myAttributedString = NSMutableAttributedString(string: "Score: \(aSGVC.incrementClickCount())", attributes: attributes)
+        if let mySGVC = findViewController() as? SetGameViewController {
+            let myAttributedString = NSMutableAttributedString(string: "Score: \(mySGVC.incrementClickCount())", attributes: attributes)
             scoreLabel.attributedText = myAttributedString
         }
         print("Click Start New Game")

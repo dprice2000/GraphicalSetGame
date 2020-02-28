@@ -13,7 +13,12 @@ import UIKit
 
 @IBDesignable
 class SetGameView: UIView {
-    
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        setNeedsLayout()
+        setNeedsDisplay()
+    }
+
     override func draw(_ rect: CGRect) {
         // Drawing code
         
@@ -21,7 +26,7 @@ class SetGameView: UIView {
 
         let aSetGameBoardView = SetGameBoardView(frame: setGameBoardBounds)
         let aSetGameButtonView = SetGameButtonView(frame: setGameButtonBounds)
-
+        
         for subView in subviews {
             subView.removeFromSuperview()
         }

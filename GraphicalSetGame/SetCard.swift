@@ -49,8 +49,8 @@ struct SetCard: CustomStringConvertible, Equatable {
         } // description
         
         case first = "first"
-        case third = "second"
-        case second = "third"
+        case second = "second"
+        case third = "third"
         
         static var all = [Shape.first, .third, .second]
     } // Shape

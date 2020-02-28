@@ -11,17 +11,25 @@ import UIKit
 @IBDesignable
 class SetGameBoardView: UIView {
 
-    private var grid = Grid(layout: Grid.Layout.dimensions(rowCount: 3, columnCount: 4))
-    
+    private var grid = Grid(layout: Grid.Layout.aspectRatio(93.5/204.5))
+    var numberOfCardViews: Int?
     private var cardViews = [SetCardView]()
-    
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        setNeedsLayout()
+        setNeedsDisplay()
+    }
+
     override func draw(_ rect: CGRect) {
         // Drawing code
         let boardBackground = UIBezierPath(rect: bounds)
         UIColor.blue.setFill()
         boardBackground.fill()
         grid.frame = bounds
-        
+        if let aSGVC = findViewController()  as? SetGameViewController{
+            grid.cellCount = aSGVC.getBoardSize()
+        }
+
         if cardViews.count == 0 {
             for _ in 0 ..< grid.cellCount {
                 let aSetCardView = SetCardView()
@@ -37,6 +45,7 @@ class SetGameBoardView: UIView {
             let cardView = cardViews[cardViewIndex]
             cardView.frame = grid[cardViewIndex]!.zoom(by: 0.95)
             addSubview(cardViews[cardViewIndex])
+            cardView.initSetCardViewAttributes(cardViewID: cardViewIndex) // after addSubView() so that we can find our view controller...
         }
     } // draw
 
