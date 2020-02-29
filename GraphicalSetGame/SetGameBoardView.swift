@@ -23,7 +23,7 @@ class SetGameBoardView: UIView {
     override func draw(_ rect: CGRect) {
         // Drawing code
         let boardBackground = UIBezierPath(rect: bounds)
-        UIColor.blue.setFill()
+        UIColor.clear.setFill()
         boardBackground.fill()
         grid.frame = bounds
         if let aSGVC = findViewController()  as? SetGameViewController{

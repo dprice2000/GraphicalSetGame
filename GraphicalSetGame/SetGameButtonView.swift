@@ -15,7 +15,7 @@ import UIKit
 class SetGameButtonView: UIView {
     private lazy var scoreLabel: UILabel = UILabel()
     private lazy var attributes:[NSAttributedString.Key:Any] = [
-        .foregroundColor: UIColor.red,
+        .foregroundColor: #colorLiteral(red: 0.3098039329, green: 0.01568627544, blue: 0.1294117719, alpha: 1),  // UIColor.red,
         .font:UIFont(name: scoreLabel.font.fontName, size: 30.0)!
     ]  // better way to get the fontName? look in playing card example
 
@@ -27,11 +27,11 @@ class SetGameButtonView: UIView {
     override func draw(_ rect: CGRect) {
         // Drawing code
         let boardBackground = UIBezierPath(rect: bounds)
-        UIColor.green.setFill()
+        UIColor.lightGray.setFill()
         boardBackground.fill()
  // blow away sub views?
         let attributes:[NSAttributedString.Key:Any] = [
-            .foregroundColor: UIColor.red,
+            .foregroundColor: #colorLiteral(red: 0.3098039329, green: 0.01568627544, blue: 0.1294117719, alpha: 1),
             .font:UIFont(name: scoreLabel.font.fontName, size: 30.0)!
         ]  // better way to get fontName?
         

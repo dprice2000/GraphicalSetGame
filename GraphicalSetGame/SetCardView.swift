@@ -44,15 +44,15 @@ class SetCardView: UIView {
         
             switch cardAttributes.myCardColor {
                 case SetCard.CardColor.first: cardColor = #colorLiteral(red: 0.01680417731, green: 0.1983509958, blue: 1, alpha: 1)
-                case SetCard.CardColor.second: cardColor = #colorLiteral(red: 1, green: 0.1491314173, blue: 0, alpha: 1)
-                case SetCard.CardColor.third: cardColor = #colorLiteral(red: 0, green: 0.9768045545, blue: 0, alpha: 1)
+                case SetCard.CardColor.second: cardColor = #colorLiteral(red: 0.5725490451, green: 0, blue: 0.2313725501, alpha: 1)
+                case SetCard.CardColor.third: cardColor = #colorLiteral(red: 0.1960784346, green: 0.3411764801, blue: 0.1019607857, alpha: 1)
             }
         }
     }
     
     private func buildSinglePip(_ pipBounds: CGRect) -> UIBezierPath {
         let centerPoint = CGPoint(x: pipBounds.width/2.0, y: pipBounds.height/2.0 + pipBounds.origin.y) // if you don't move to pipBounds.origin, all of the pips drawn on top of eachother
-        let shapeSize = pipBounds.width/3.0
+        let shapeSize = (pipBounds.width/3.0)*0.75
         var path: UIBezierPath
         let unWrappedShape = shape!
         
@@ -75,50 +75,68 @@ class SetCardView: UIView {
             path.addLine(to: CGPoint(x: (centerPoint.x - shapeSize),
                                      y: (centerPoint.y + shapeSize)))
             path.close()
-            
         }
         return path
     }
     
-    private func buildPipInformation() -> [UIBezierPath] {
-        var paths = [UIBezierPath()]
+    private func buildPipInformation() -> UIBezierPath {
+        let drawingPath = UIBezierPath()
         
         switch pipCount! {
         case 1:
-            paths.append(buildSinglePip(bounds))
+            drawingPath.append(buildSinglePip(bounds))
         case 2:
             let (topFrame, bottomFrame) = bounds.divided(atDistance: bounds.size.height * 0.50, from: CGRectEdge.minYEdge)
-//            print("top frame \(topFrame) and bottom frame \(bottomFrame)")
-            paths.append(buildSinglePip(topFrame))
-            paths.append(buildSinglePip(bottomFrame))
+            drawingPath.append(buildSinglePip(topFrame))
+            drawingPath.append(buildSinglePip(bottomFrame))
 
         case 3:
             let (topFrame, remainingFrame) = bounds.divided(atDistance: bounds.size.height * 0.33, from: CGRectEdge.minYEdge)
             let (middleFrame, bottomFrame) = remainingFrame.divided(atDistance: remainingFrame.size.height * 0.50, from: CGRectEdge.minYEdge)
-            paths.append(buildSinglePip(topFrame))
-            paths.append(buildSinglePip(middleFrame))
-            paths.append(buildSinglePip(bottomFrame))
+            drawingPath.append(buildSinglePip(topFrame))
+            drawingPath.append(buildSinglePip(middleFrame))
+            drawingPath.append(buildSinglePip(bottomFrame))
         default:
             break
         }
-        return paths
+        return drawingPath
     }
     
     override func draw(_ rect: CGRect) {
         let cardBackground = UIBezierPath(rect: bounds)
-        UIColor.orange.setFill()
+        UIColor.clear.setFill()
         cardBackground.fill()
         let roundedRect = UIBezierPath(roundedRect: bounds, cornerRadius: cornerRadius)
         roundedRect.addClip()
         UIColor.lightGray.setFill()
         roundedRect.fill()
 
-        let paths = buildPipInformation()
-        cardColor?.setFill()
+        let drawingPipsPath = buildPipInformation()
 
-        for path in paths {
-            path.fill()
+        switch shading! {
+        case SetCard.Shading.filled:
+            cardColor?.setFill()
+            drawingPipsPath.fill()
+        case SetCard.Shading.border:
+            cardColor?.setStroke()
+            drawingPipsPath.lineWidth = 5.0
+            drawingPipsPath.stroke()
+        case SetCard.Shading.shaded:
+            cardColor?.setStroke()
+            drawingPipsPath.stroke()
+            drawingPipsPath.addClip()
+            let stripedPath = UIBezierPath()
+            stripedPath.lineWidth = 2.0  // gotta scale this for edge case of 81 cards drawn
+            
+            var currentX:CGFloat = 0.0
+            while currentX < frame.size.width {
+                stripedPath.move(to: CGPoint(x: currentX, y: 0))
+                stripedPath.addLine(to: CGPoint(x: currentX, y: bounds.size.height))
+                currentX += 0.07 * bounds.size.width
+            }
+            stripedPath.stroke()
         }
+        
         let myCardButton = UIButton(type: .custom)
         let myCardButtonCustomView = UIView(frame: bounds)
         myCardButtonCustomView.isUserInteractionEnabled = false
@@ -144,11 +162,3 @@ extension SetCardView {
         return bounds.size.height * SizeRatio.cornerRadiusToBoundsHeight
     }
 }
-
-//extension SetCardView {
-//    private struct keyPoints {
-//        static let centerPoint = CGPoint(x: bounds.height/2.0, y: bounds.width/2.0)
-//    }
-//
-//}
-
