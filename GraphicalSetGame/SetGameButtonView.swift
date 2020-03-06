@@ -15,7 +15,7 @@ import UIKit
 class SetGameButtonView: UIView {
     private lazy var scoreLabel: UILabel = UILabel()
     private lazy var attributes:[NSAttributedString.Key:Any] = [
-        .foregroundColor: #colorLiteral(red: 0.3098039329, green: 0.01568627544, blue: 0.1294117719, alpha: 1),  // UIColor.red,
+        .foregroundColor: #colorLiteral(red: 0.5725490451, green: 0, blue: 0.2313725501, alpha: 1),  // UIColor.red,
         .font:UIFont(name: scoreLabel.font.fontName, size: 30.0)!
     ]  // better way to get the fontName? look in playing card example
 
@@ -31,9 +31,10 @@ class SetGameButtonView: UIView {
         boardBackground.fill()
  // blow away sub views?
         let attributes:[NSAttributedString.Key:Any] = [
-            .foregroundColor: #colorLiteral(red: 0.3098039329, green: 0.01568627544, blue: 0.1294117719, alpha: 1),
+            .foregroundColor: #colorLiteral(red: 0.5725490451, green: 0, blue: 0.2313725501, alpha: 1),
             .font:UIFont(name: scoreLabel.font.fontName, size: 30.0)!
-        ]  // better way to get fontName?
+        ]
+        // TODO: better way to get fontName?
         
         var draw3CardsButtonBounds : CGRect
         var newGameButtonBounds : CGRect
@@ -70,7 +71,7 @@ class SetGameButtonView: UIView {
         addSubview(newGameButton)
         
         if let mySGVC = findViewController() as? SetGameViewController {
-            myAttributedString = NSMutableAttributedString(string: "Score: \(mySGVC.clickCount)", attributes: attributes)
+            myAttributedString = NSMutableAttributedString(string: "Score: \(mySGVC.getScore())", attributes: attributes)
             scoreLabel.attributedText = myAttributedString
         } else {
             myAttributedString = NSMutableAttributedString(string: "Score: 0", attributes: attributes)
@@ -93,8 +94,7 @@ class SetGameButtonView: UIView {
     @objc
     func newGameAction() {
         if let mySGVC = findViewController() as? SetGameViewController {
-            let myAttributedString = NSMutableAttributedString(string: "Score: \(mySGVC.incrementClickCount())", attributes: attributes)
-            scoreLabel.attributedText = myAttributedString
+            mySGVC.performStartNewGame()
         }
         print("Click Start New Game")
     }

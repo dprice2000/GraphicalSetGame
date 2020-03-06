@@ -12,6 +12,9 @@ import UIKit
 
 @IBDesignable
 class SetCardView: UIView {
+
+    //TODO: consistent use of argument labels
+    //TODO: override init to remove optionals
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -31,7 +34,7 @@ class SetCardView: UIView {
     func initSetCardViewAttributes(cardViewID: Int) {
         cardViewIdentifier = cardViewID
         if let aSGVC = findViewController()  as? SetGameViewController {
-            let cardAttributes = aSGVC.getAttributesFromCardID(cardID: cardViewID)
+            let cardAttributes = aSGVC.getAttributesFromCardID(cardViewID)
             
             shape = cardAttributes.myShape
             shading = cardAttributes.myShading
@@ -51,7 +54,7 @@ class SetCardView: UIView {
     }
     
     private func buildSinglePip(_ pipBounds: CGRect) -> UIBezierPath {
-        let centerPoint = CGPoint(x: pipBounds.width/2.0, y: pipBounds.height/2.0 + pipBounds.origin.y) // if you don't move to pipBounds.origin, all of the pips drawn on top of eachother
+        let centerPoint = CGPoint(x: pipBounds.width/2.0, y: pipBounds.height/2.0 + pipBounds.origin.y) // if you don't move to pipBounds.origin.y, all of the pips drawn on top of eachother
         let shapeSize = (pipBounds.width/3.0)*0.75
         var path: UIBezierPath
         let unWrappedShape = shape!
@@ -111,6 +114,24 @@ class SetCardView: UIView {
         UIColor.lightGray.setFill()
         roundedRect.fill()
 
+        if let aSGVC = findViewController()  as? SetGameViewController {
+            if ( aSGVC.isSelectedCard(cardViewIdentifier!) == true ) {
+                UIColor.purple.setStroke()
+                roundedRect.lineWidth = 15.0
+                roundedRect.stroke()
+            }
+            if ( aSGVC.isMatchedCard(cardViewIdentifier!) == true ) {
+                UIColor.orange.setStroke()
+                roundedRect.lineWidth = 15.0
+                roundedRect.stroke()
+            }
+
+        }
+        else {
+            print("No view controller found for \(cardViewIdentifier!)")
+        }
+
+        
         let drawingPipsPath = buildPipInformation()
 
         switch shading! {
@@ -149,6 +170,12 @@ class SetCardView: UIView {
     
     @objc
     func touchCardAction() {
+        if let aSGVC = findViewController()  as? SetGameViewController {
+            aSGVC.performTouchCard(cardViewIdentifier!)
+        }
+        else {
+            print("No view controller found for \(cardViewIdentifier!)")
+        }
         print("Touched a card! \(cardViewIdentifier!)")
     }
 }

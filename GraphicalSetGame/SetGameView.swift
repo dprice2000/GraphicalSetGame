@@ -66,13 +66,8 @@ extension CGPoint {
 
 extension SetGameView {
     private struct SizeRatio {
-//        static let cornerRadiusToBoundsHeight: CGFloat = 0.06
-//        static let cornerOffsetToCornerRadius: CGFloat = 0.33
         static let boardHeightToBoundsRatio: CGFloat = 0.75
     }
-//    private var cornerRadius: CGFloat {
-//        return bounds.size.height * SizeRatio.cornerRadiusToBoundsHeight
-//    }
 
     private var boardBoundry: CGFloat {
         return bounds.size.height * SizeRatio.boardHeightToBoundsRatio
