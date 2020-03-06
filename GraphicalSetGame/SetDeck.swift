@@ -30,7 +30,7 @@ struct SetDeck
         }
         return nil
     } // draw() -> Card?
-}
+} // SetDeck
 
 extension Int {
     var arc4random: Int {

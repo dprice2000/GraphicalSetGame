@@ -13,7 +13,6 @@ struct SetGame {
     private(set) var drawnCards = [SetCard]()
     private(set) var selectedCards = [SetCard]()
     private(set) var matchedCards = [SetCard]()
-//    private var boardSize = 0
     private(set) var score = 0
     
 
@@ -21,15 +20,13 @@ struct SetGame {
         for _ in 1...boardSize {
             if let aCard = gameDeck.draw() { drawnCards.append( aCard ) } // or throw an error?
         }
-//        self.boardSize = boardSize
     } // init()
     
     func moreCardsToDeal() -> Bool {
         if gameDeck.cards.count == 0 { return false }
         if matchedCards.count != 0 { return true }
-//        if drawnCards.count == boardSize { return false }
         return true
-    }
+    } // moreCardsToDeal() -> Bool
     
     private mutating func replaceMatchedCards () {
         for index in matchedCards.indices {
@@ -42,52 +39,56 @@ struct SetGame {
             }
         }
         matchedCards.removeAll()
-    }
+    } // replaceMatchingCards()
   
     mutating func shuffleDrawnCards() {
         drawnCards.shuffle()
-    }
+    } // shuffleDrawnCards()
     
     mutating func dealThreeCards()
     {
         if matchedCards.count > 0 {
             replaceMatchedCards()
             return
-        }//        if drawnCards.count + 3 > boardSize { return }  // do not overfill the board
+        }
         for _ in 1...3 {
             if let aCard = gameDeck.draw() { drawnCards.append(aCard) }
         }
     } // dealThreeCards()
     
     private func isSelectionASet () -> Bool  {
+        /*
+         In the set game, each attribute of the cards must either be the same on all cards, or different on all cards.
+         In other words, you cannot have only two cards with the same attribute.  One card with squares, one with
+         triangles and one with circles does not break the set. Two cards with triangles and one with squares breaks the
+         set.  Three cards with triangles does not break the set.
+         So if the count of any attribute is 2, return false.
+         */
         
-//        var shapes = [SetCard.Shape: Bool]()
-//        var shadings = [SetCard.Shading: Bool]()
-//        var pipCounts = [SetCard.PipCount: Bool]()
-//        var cardColors = [SetCard.CardColor: Bool]()
-//
-//        for card in selectedCards {
-//            shapes[SetCard.shape] = true
-//            shadings[SetCard.shading] = true
-//            pipCounts[SetCard.pipCount] = true
-//            cardColors[SetCard.cardColor] = true
-//        }
-//        if shapes.count == 2 {
-//            print("NO SET -- shapes")
-//            return false
-//        }
-//        if shadings.count == 2 {
-//            print("NO SET -- shadings")
-//            return false
-//        }
-//        if pipCounts.count == 2 {
-//            print("NO SET -- pip counts")
-//            return false
-//        }
-//        if cardColors.count == 2 {
-//            print("NO SET -- colors")
-//            return false
-//        }
+        if SetGame.easyMode == true { return true }  // for debugging purposes only! ;)
+        var shapes = [SetCard.Shape: Bool]()
+        var shadings = [SetCard.Shading: Bool]()
+        var pipCounts = [SetCard.PipCount: Bool]()
+        var cardColors = [SetCard.CardColor: Bool]()
+
+        for card in selectedCards {
+            shapes[card.shape] = true
+            shadings[card.shading] = true
+            pipCounts[card.pipCount] = true
+            cardColors[card.cardColor] = true
+        }
+        if shapes.count == 2 {
+            return false
+        }
+        if shadings.count == 2 {
+            return false
+        }
+        if pipCounts.count == 2 {
+            return false
+        }
+        if cardColors.count == 2 {
+            return false
+        }
         return true
     } // isSelectionASet () -> Bool
     
@@ -127,7 +128,6 @@ struct SetGame {
                 matchedCards.append(selectedCards[index])
             }
             selectedCards.removeAll()
-            print("We have a set");
         }
     } // selectCard (atIndex: Int)
     
@@ -143,8 +143,12 @@ struct SetGame {
         }
     } // startNewGame()
     
-    func getAttributesFromCardID(cardID: Int) -> (myShape: SetCard.Shape, myShading: SetCard.Shading, myPipCount: SetCard.PipCount, myCardColor: SetCard.CardColor) {
+    func getAttributesFromCardID(cardID: Int) -> (aShape: SetCard.Shape, aShading: SetCard.Shading, aPipCount: SetCard.PipCount, aCardColor: SetCard.CardColor) {
         return drawnCards[cardID].getCardAttributes()   
     }
     
 } // SetGame()
+
+extension SetGame {
+    private static let easyMode = false
+}

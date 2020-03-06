@@ -14,17 +14,10 @@ import UIKit
 @IBDesignable
 class SetGameView: UIView {
 
-//    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-//        setNeedsLayout()
-//        setNeedsDisplay()
-//    }
-
-
     override func draw(_ rect: CGRect) {
         // Drawing code
         
         let (setGameBoardBounds, setGameButtonBounds) = bounds.divided(atDistance: boardBoundry, from: CGRectEdge.minYEdge)
-
         let aSetGameBoardView = SetGameBoardView(frame: setGameBoardBounds)
         let aSetGameButtonView = SetGameButtonView(frame: setGameButtonBounds)
         
@@ -34,24 +27,11 @@ class SetGameView: UIView {
 
         addSubview(aSetGameBoardView)
         addSubview(aSetGameButtonView)
-    }
-    
+    }    
 } // setGameView
 
 
 extension CGRect {
-    var leftHalf: CGRect {
-        return CGRect(x: minX, y: minY, width: width/2, height: height)
-    }
-    var rightHalf: CGRect {
-        return CGRect(x: midX, y: midY, width: width/2, height: height)
-    }
-    func inset(by size: CGSize) -> CGRect {
-        return insetBy(dx: size.width, dy: size.height)
-    }
-    func sized(to size: CGSize) -> CGRect {
-        return CGRect(origin: origin, size: size)
-    }
     func zoom(by scale: CGFloat) -> CGRect {
         let newWidth = width * scale
         let newHeight = height * scale
@@ -69,11 +49,10 @@ extension SetGameView {
     private struct SizeRatio {
         static let boardHeightToBoundsRatio: CGFloat = 0.75
     }
-
     private var boardBoundry: CGFloat {
         return bounds.size.height * SizeRatio.boardHeightToBoundsRatio
     }
-}
+} //SetGameView Constants
 
 extension UIView {
     func findViewController() -> UIViewController? {
@@ -85,4 +64,4 @@ extension UIView {
             return nil
         }
     }
-}
+} // extension UIView

@@ -22,13 +22,13 @@ class SetGameViewController: UIViewController {
         swipeRecognizer.direction = .down
         view.addGestureRecognizer(swipeRecognizer)
         // Do any additional setup after loading the view, typically from a nib.
-    }
+    } //viewDidLoad()
 
     func getBoardSize() -> Int {
         return game.drawnCards.count
-    }
+    } //getBoardSize() -> Int
     
-    @objc func performDraw3Cards(_ recognizer : UIRotationGestureRecognizer) {
+    @objc func performDraw3Cards(_ recognizer : UISwipeGestureRecognizer) {
         switch recognizer.state {
         case .ended:
             game.shuffleDrawnCards()
@@ -36,53 +36,57 @@ class SetGameViewController: UIViewController {
             break
         }
         updateViewFromModel()
-    }
+    } // performDeal3Cards(_ recognizer : UISwipeGestureRecognizer)
 
     func performDraw3Cards () {
         game.dealThreeCards()
-        print("number of cards = \(getBoardSize())")
-    }
+        updateViewFromModel()
+    } // performDraw3Cards()
     
     func performTouchCard(_ cardID: Int) {
         game.selectCard(atIndex: cardID)
         updateViewFromModel()
-    }
+    } // performTouchCards(_ cardID: Int)
 
     func performStartNewGame() {
         game.startNewGame()
         updateViewFromModel()
-    }
+    } // performStartNewGame()
     
     @objc func performCardShuffle(_ recognizer : UIRotationGestureRecognizer) {
         switch recognizer.state {
         case .ended:
             game.shuffleDrawnCards()
+            updateViewFromModel()
         default:
             break
         }
-        updateViewFromModel()
-    }
+    } // performCardShuffle(_ recognizer: UIRotationGestureRecognizer
     
-    func getAttributesFromCardID(_ cardID: Int) -> (myShape: SetCard.Shape, myShading: SetCard.Shading, myPipCount: SetCard.PipCount, myCardColor: SetCard.CardColor) {
+    func getAttributesFromCardID(_ cardID: Int) -> (aShape: SetCard.Shape, aShading: SetCard.Shading, aPipCount: SetCard.PipCount, aCardColor: SetCard.CardColor) {
         return game.getAttributesFromCardID(cardID: cardID)
-    }
+    } //getAttributesFromCardID(_ cardID: Int) -> ...
     
     func isSelectedCard(_ cardID: Int) -> Bool {
         return game.selectedCards.contains(game.drawnCards[cardID])
-    }
+    } //isSeclectedCard(_ cardID: Int) -> Bool
 
     func isMatchedCard(_ cardID: Int) -> Bool {
         return game.matchedCards.contains(game.drawnCards[cardID])
-    }
+    } //isMatchedCard(_ cardID: Int) -> Bool
 
     func getScore() -> Int {
         return game.score
-    }
+    } //getScore() -> Int
+    
+    func getDrawCardsAbility() -> Bool {  // can we draw more cards?
+        return game.moreCardsToDeal()
+    } //getDrawCardsAbility() -> Bool
     
     func updateViewFromModel() {
         mainViewOutlet.setNeedsLayout()
         mainViewOutlet.setNeedsDisplay()
-    }
+    } //updateViewFromModel()
     
-}
+} //SetGameViewController
 

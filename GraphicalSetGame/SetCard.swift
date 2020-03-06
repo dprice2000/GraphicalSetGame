@@ -42,8 +42,8 @@ struct SetCard: CustomStringConvertible, Equatable {
     enum Shape: String, CustomStringConvertible  {
         var description: String {
             switch self {
-            case Shape.first: return "triangle"
-            case Shape.second:   return "circle  "
+            case Shape.first:   return "triangle"
+            case Shape.second:  return "circle  "
             case Shape.third:   return "square  "
             }
         } // description
@@ -75,8 +75,8 @@ struct SetCard: CustomStringConvertible, Equatable {
         var description: String {
             switch self {
             case CardColor.first:   return "red  "
-            case CardColor.second: return "green"
-            case CardColor.third:  return "blue "
+            case CardColor.second:  return "green"
+            case CardColor.third:   return "blue "
             }
         } // description
         
@@ -88,7 +88,7 @@ struct SetCard: CustomStringConvertible, Equatable {
     } // CardColor
     
     // this getter is for the view
-    func getCardAttributes() -> (myShape: SetCard.Shape, myShading: SetCard.Shading, myPipCount: SetCard.PipCount, myCardColor: SetCard.CardColor) {
+    func getCardAttributes() -> (aShape: SetCard.Shape, aShading: SetCard.Shading, aPipCount: SetCard.PipCount, aCardColor: SetCard.CardColor) {
         return (self.shape, self.shading, self.pipCount, self.cardColor)
     } // getCardAttributes()
     
