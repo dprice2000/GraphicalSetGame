@@ -127,10 +127,6 @@ class SetCardView: UIView {
             }
 
         }
-        else {
-            print("No view controller found for \(cardViewIdentifier!)")
-        }
-
         
         let drawingPipsPath = buildPipInformation()
 
@@ -162,6 +158,7 @@ class SetCardView: UIView {
         let myCardButtonCustomView = UIView(frame: bounds)
         myCardButtonCustomView.isUserInteractionEnabled = false
         myCardButton.frame = bounds
+        myCardButton.contentMode = .redraw //??
         myCardButton.addSubview(myCardButtonCustomView)
         myCardButton.addTarget(self, action: #selector(touchCardAction), for: .touchUpInside)
         addSubview(myCardButton)

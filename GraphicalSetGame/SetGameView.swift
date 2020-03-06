@@ -14,10 +14,11 @@ import UIKit
 @IBDesignable
 class SetGameView: UIView {
 
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        setNeedsLayout()
-        setNeedsDisplay()
-    }
+//    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+//        setNeedsLayout()
+//        setNeedsDisplay()
+//    }
+
 
     override func draw(_ rect: CGRect) {
         // Drawing code
@@ -84,5 +85,4 @@ extension UIView {
             return nil
         }
     }
-    
 }

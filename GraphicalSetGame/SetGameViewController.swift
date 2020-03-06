@@ -13,10 +13,14 @@ class SetGameViewController: UIViewController {
     @IBOutlet weak var mainViewOutlet: SetGameView!
     
     private lazy var game = SetGame(boardSize: 12)
-//    var score = 0 { didSet {updateViewFromModel()} }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        let rotateRecognizer = UIRotationGestureRecognizer(target: self, action: #selector(performCardShuffle(_ :)))
+        view.addGestureRecognizer(rotateRecognizer)
+        let swipeRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(performDraw3Cards(_ :)))
+        swipeRecognizer.direction = .down
+        view.addGestureRecognizer(swipeRecognizer)
         // Do any additional setup after loading the view, typically from a nib.
     }
 
@@ -24,6 +28,16 @@ class SetGameViewController: UIViewController {
         return game.drawnCards.count
     }
     
+    @objc func performDraw3Cards(_ recognizer : UIRotationGestureRecognizer) {
+        switch recognizer.state {
+        case .ended:
+            game.shuffleDrawnCards()
+        default:
+            break
+        }
+        updateViewFromModel()
+    }
+
     func performDraw3Cards () {
         game.dealThreeCards()
         print("number of cards = \(getBoardSize())")
@@ -36,6 +50,16 @@ class SetGameViewController: UIViewController {
 
     func performStartNewGame() {
         game.startNewGame()
+        updateViewFromModel()
+    }
+    
+    @objc func performCardShuffle(_ recognizer : UIRotationGestureRecognizer) {
+        switch recognizer.state {
+        case .ended:
+            game.shuffleDrawnCards()
+        default:
+            break
+        }
         updateViewFromModel()
     }
     

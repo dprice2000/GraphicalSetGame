@@ -13,7 +13,7 @@ struct SetGame {
     private(set) var drawnCards = [SetCard]()
     private(set) var selectedCards = [SetCard]()
     private(set) var matchedCards = [SetCard]()
-    private var boardSize = 0
+//    private var boardSize = 0
     private(set) var score = 0
     
 
@@ -21,13 +21,13 @@ struct SetGame {
         for _ in 1...boardSize {
             if let aCard = gameDeck.draw() { drawnCards.append( aCard ) } // or throw an error?
         }
-        self.boardSize = boardSize
+//        self.boardSize = boardSize
     } // init()
     
     func moreCardsToDeal() -> Bool {
         if gameDeck.cards.count == 0 { return false }
         if matchedCards.count != 0 { return true }
-        if drawnCards.count == boardSize { return false }
+//        if drawnCards.count == boardSize { return false }
         return true
     }
     
@@ -43,14 +43,17 @@ struct SetGame {
         }
         matchedCards.removeAll()
     }
+  
+    mutating func shuffleDrawnCards() {
+        drawnCards.shuffle()
+    }
     
     mutating func dealThreeCards()
     {
         if matchedCards.count > 0 {
             replaceMatchedCards()
             return
-        }
-//        if drawnCards.count + 3 > boardSize { return }  // do not overfill the board
+        }//        if drawnCards.count + 3 > boardSize { return }  // do not overfill the board
         for _ in 1...3 {
             if let aCard = gameDeck.draw() { drawnCards.append(aCard) }
         }
@@ -90,7 +93,6 @@ struct SetGame {
     
     mutating func selectCard (atIndex: Int)
     {
-//        print("selecting card \(atIndex)")
         if atIndex >= drawnCards.count { return }
         
         if selectedCards.count == 3  // selecting a fourth card, clear selection and select new card only
