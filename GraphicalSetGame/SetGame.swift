@@ -23,9 +23,7 @@ struct SetGame {
     } // init()
     
     func moreCardsToDeal() -> Bool {
-        if gameDeck.cards.count == 0 { return false }
-        if matchedCards.count != 0 { return true }
-        return true
+        return gameDeck.cards.count > 0 
     } // moreCardsToDeal() -> Bool
     
     private mutating func replaceMatchedCards () {

@@ -6,30 +6,42 @@
 //  Copyright © 2020 Dave. All rights reserved.
 //
 
-// draw one card
+// draw (paint) one card
 
 import UIKit
 
 @IBDesignable
 class SetCardView: UIView {
 
-    //TODO: override init to remove optionals
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        self.clipsToBounds = true
-    } // init(frame: CGRect)
-    
-    required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-        self.clipsToBounds = true
-    } //init?(coder aDecoder: NSCoder)
+    override init(frame: CGRect) { fatalError("init(frame:) has not been implemented") }
 
-    private var cardViewIdentifier: Int? = nil
-    private var cardColor: UIColor? = nil
-    private var pipCount: Int? = nil
-    private var shape: SetCard.Shape? = nil
-    private var shading: SetCard.Shading? = nil
+    required init?(coder aDecoder: NSCoder) { fatalError("init(coder:) has not been implemented") }
+    
+    init(frame: CGRect, cardViewID: Int, cardAttributes:(aShape: SetCard.Shape, aShading: SetCard.Shading, aPipCount: SetCard.PipCount, aCardColor: SetCard.CardColor)) {
+
+        cardViewIdentifier = cardViewID
+        shape = cardAttributes.aShape
+        shading = cardAttributes.aShading
+        
+        switch cardAttributes.aPipCount {
+        case SetCard.PipCount.one: pipCount = 1
+        case SetCard.PipCount.two: pipCount = 2
+        case SetCard.PipCount.three: pipCount = 3
+        }
+        
+        switch cardAttributes.aCardColor {
+        case SetCard.CardColor.first: cardColor = SetCardView.blueCardColor
+        case SetCard.CardColor.second: cardColor = SetCardView.redCardColor
+        case SetCard.CardColor.third: cardColor = SetCardView.greenCardColor
+        }
+        super.init(frame: frame)
+    } // init (frame: CGRect, cardViewID: Int, cardAttributes: ...
+    
+    private var cardViewIdentifier: Int
+    private var cardColor: UIColor
+    private var pipCount: Int
+    private var shape: SetCard.Shape
+    private var shading: SetCard.Shading
     
     func initSetCardViewAttributes(cardViewID: Int) {
         cardViewIdentifier = cardViewID
@@ -59,7 +71,7 @@ class SetCardView: UIView {
         let shapeSize = pipBounds.width * SetCardView.pipSizeRatio
         var path: UIBezierPath
         
-        switch shape! {
+        switch shape {
         case SetCard.Shape.first: // circle
             path = UIBezierPath(arcCenter: centerPoint, radius: shapeSize, startAngle: CGFloat(0), endAngle:CGFloat.pi * 2, clockwise: true)
             
@@ -85,7 +97,7 @@ class SetCardView: UIView {
     private func buildPipInformation() -> UIBezierPath {
         let drawingPath = UIBezierPath()
         
-        switch pipCount! {
+        switch pipCount {
         case 1:
             drawingPath.append(buildSinglePip(bounds))
         case 2:
@@ -115,12 +127,12 @@ class SetCardView: UIView {
         roundedRect.fill()
 
         if let sgvc = findViewController()  as? SetGameViewController {
-            if ( sgvc.isSelectedCard(cardViewIdentifier!) == true ) {
+            if ( sgvc.isSelectedCard(cardViewIdentifier) == true ) {
                 UIColor.purple.setStroke()
                 roundedRect.lineWidth = SetCardView.highlightedCardBorderWidth
                 roundedRect.stroke()
             }
-            if ( sgvc.isMatchedCard(cardViewIdentifier!) == true ) {
+            if ( sgvc.isMatchedCard(cardViewIdentifier) == true ) {
                 UIColor.orange.setStroke()
                 roundedRect.lineWidth = SetCardView.highlightedCardBorderWidth
                 roundedRect.stroke()
@@ -129,16 +141,16 @@ class SetCardView: UIView {
         
         let drawingPipsPath = buildPipInformation()
 
-        switch shading! {
+        switch shading {
         case SetCard.Shading.filled:
-            cardColor?.setFill()
+            cardColor.setFill()
             drawingPipsPath.fill()
         case SetCard.Shading.border:
-            cardColor?.setStroke()
+            cardColor.setStroke()
             drawingPipsPath.lineWidth = SetCardView.borderShadingLineWidth
             drawingPipsPath.stroke()
         case SetCard.Shading.shaded:
-            cardColor?.setStroke()
+            cardColor.setStroke()
             drawingPipsPath.stroke()
             drawingPipsPath.addClip()
             let stripedPath = UIBezierPath()
@@ -166,7 +178,7 @@ class SetCardView: UIView {
     @objc
     func touchCardAction() {
         if let sgvc = findViewController()  as? SetGameViewController {
-            sgvc.performTouchCard(cardViewIdentifier!)
+            sgvc.performTouchCard(cardViewIdentifier)
         }
     } // touchCardAction()
 } // SetCardView
