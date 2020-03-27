@@ -123,7 +123,7 @@ class SetCardView: UIView {
         cardBackground.fill()
         let roundedRect = UIBezierPath(roundedRect: bounds, cornerRadius: cornerRadius)
         roundedRect.addClip()
-        UIColor.lightGray.setFill()
+        UIColor.lightGray.setFill()  // move to constants
         roundedRect.fill()
 
         if let sgvc = findViewController()  as? SetGameViewController {
@@ -184,19 +184,17 @@ class SetCardView: UIView {
 } // SetCardView
 
 extension SetCardView {
-    private struct SizeRatio {
-        static let cornerRadiusToBoundsHeight: CGFloat = 0.06
-    }
+    static let cornerRadiusToBoundsHeight: CGFloat = 0.06
     private var cornerRadius : CGFloat {
-        return bounds.size.height * SizeRatio.cornerRadiusToBoundsHeight
+        return bounds.size.height * SetCardView.cornerRadiusToBoundsHeight
     }
     static private let borderShadingLineWidth : CGFloat = 5.0
     static private let pipSizeRatio : CGFloat = 0.25
-    static private let highlightedCardBorderWidth : CGFloat = 15.0
     static private let stripedPipLineWidth : CGFloat = 2.0
     static private let stripedPipLineSpacingRatio : CGFloat = 0.07
     
-    static private let blueCardColor = #colorLiteral(red: 0.01680417731, green: 0.1983509958, blue: 1, alpha: 1)
-    static private let redCardColor = #colorLiteral(red: 0.5725490451, green: 0, blue: 0.2313725501, alpha: 1)
-    static private let greenCardColor = #colorLiteral(red: 0.1960784346, green: 0.3411764801, blue: 0.1019607857, alpha: 1)
+    static let highlightedCardBorderWidth : CGFloat = 15.0
+    static let blueCardColor = #colorLiteral(red: 0.01680417731, green: 0.1983509958, blue: 1, alpha: 1)
+    static let redCardColor = #colorLiteral(red: 0.5725490451, green: 0, blue: 0.2313725501, alpha: 1)
+    static let greenCardColor = #colorLiteral(red: 0.1960784346, green: 0.3411764801, blue: 0.1019607857, alpha: 1)
 } //SetCardView constants
