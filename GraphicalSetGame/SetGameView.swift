@@ -31,8 +31,7 @@ class SetGameView: UIView {
         }
         
         var score = 0
-        var enableDrawButton = true
-
+        var enableDrawButton = false
         let gameBackground = UIBezierPath(rect: bounds)
         SetGameView.backgroundColor.setFill()
         gameBackground.fill()
@@ -61,14 +60,22 @@ class SetGameView: UIView {
         var scoreLabelBounds : CGRect
         var remainingBounds : CGRect
 
-        (drawDeckButtonBounds, remainingBounds) = setGameButtonBounds.divided(atDistance: setGameButtonBounds.size.height * SetGameView.cardAspectRatio, from: CGRectEdge.minXEdge)
-        (discardPileBounds, remainingBounds) = remainingBounds.divided(atDistance: setGameButtonBounds.size.height * SetGameView.cardAspectRatio, from: CGRectEdge.minXEdge)
         // if I'm in portrait mode, stack my buttons
         // if I'm in landscape mode, my buttons are side by side
         if UIScreen.main.bounds.width < UIScreen.main.bounds.height {
-        (newGameButtonBounds,scoreLabelBounds) = remainingBounds.divided(atDistance: remainingBounds.size.height * 0.50, from: CGRectEdge.minYEdge)
+            (drawDeckButtonBounds, remainingBounds) =
+                setGameButtonBounds.divided(atDistance: setGameButtonBounds.size.height * SetGameView.cardAspectRatio, from: CGRectEdge.minXEdge)
+            (discardPileBounds, remainingBounds) =
+                remainingBounds.divided(atDistance: setGameButtonBounds.size.height * SetGameView.cardAspectRatio, from: CGRectEdge.minXEdge)
+            (newGameButtonBounds,scoreLabelBounds) =
+                remainingBounds.divided(atDistance: remainingBounds.size.height * 0.50, from: CGRectEdge.minYEdge)
         } else {
-            (newGameButtonBounds,scoreLabelBounds) = remainingBounds.divided(atDistance: remainingBounds.size.width * 0.50, from: CGRectEdge.minXEdge)
+            (drawDeckButtonBounds, remainingBounds) =
+                setGameButtonBounds.divided(atDistance: setGameButtonBounds.size.width * 0.5, from: CGRectEdge.minXEdge)
+            (newGameButtonBounds, drawDeckButtonBounds) =
+                drawDeckButtonBounds.divided(atDistance: drawDeckButtonBounds.size.width - (setGameButtonBounds.size.height * SetGameView.cardAspectRatio), from: CGRectEdge.minXEdge)
+            (discardPileBounds,scoreLabelBounds) =
+                remainingBounds.divided(atDistance: setGameButtonBounds.size.height * SetGameView.cardAspectRatio, from: CGRectEdge.minXEdge)
         }
         
         let draw3CardsButton = UIButton(type: .custom)
@@ -76,11 +83,14 @@ class SetGameView: UIView {
         
         draw3CardsButtonCustomView.isUserInteractionEnabled = false
         draw3CardsButton.frame = drawDeckButtonBounds
-        renderDrawDeck(inFrame: drawDeckButtonBounds)
-        draw3CardsButton.isEnabled = enableDrawButton
-        draw3CardsButton.addSubview(draw3CardsButtonCustomView)
+        renderDrawDeck(inFrame: drawDeckButtonBounds, isEnabled: enableDrawButton)
         draw3CardsButton.addTarget(self, action: #selector(draw3CardsAction), for: .touchUpInside)
         addSubview(draw3CardsButton)
+
+        let discardPileView = UIView(frame: discardPileBounds)
+        
+        renderDiscardPile(inFrame: discardPileBounds)
+        addSubview(discardPileView)
         
         var titleAttributedString = NSMutableAttributedString(string: "New Game", attributes: attributes)
         let newGameButton = UIButton(type: .custom)
@@ -103,19 +113,43 @@ class SetGameView: UIView {
 
     } // draw
     
-    private func renderDrawDeck(inFrame: CGRect) {
+    private func renderDrawDeck(inFrame: CGRect, isEnabled: Bool) {
+        let backgroundRect = UIBezierPath(rect: inFrame)
+        SetGameView.boardBackgroundColor.setFill()
+        backgroundRect.fill()
+        if ( isEnabled == true) {
+            let outterRoundedRect = UIBezierPath(roundedRect: inFrame.zoom(by: 0.95), cornerRadius: inFrame.size.height * SetCardView.cornerRadiusToBoundsHeight)
+            SetCardView.greenCardColor.setFill()
+                outterRoundedRect.fill()
+            let midRoundedRect = UIBezierPath(roundedRect: inFrame.zoom(by: 0.75), cornerRadius: inFrame.size.height * SetCardView.cornerRadiusToBoundsHeight)
+            SetCardView.redCardColor.setFill()
+            midRoundedRect.fill()
+            let innerRoundedRect = UIBezierPath(roundedRect: inFrame.zoom(by: 0.50), cornerRadius: inFrame.size.height * SetCardView.cornerRadiusToBoundsHeight)
+            SetCardView.blueCardColor.setFill()
+            innerRoundedRect.fill()
+        } else {
+            let outterRoundedRect = UIBezierPath(roundedRect: inFrame.zoom(by: 0.95), cornerRadius: inFrame.size.height * SetCardView.cornerRadiusToBoundsHeight)
+            SetGameView.buttonFontColor.setStroke()
+            outterRoundedRect.stroke()
+        }
+    }
+    
+    private func renderDiscardPile(inFrame: CGRect) {
+        if let sgvc = findViewController()  as? SetGameViewController {
+            if let topOfDiscardPileAttributes = sgvc.getTopOfDiscardPile() {
+                let aSetCardView = SetCardView(frame: inFrame,  cardViewID: nil, cardAttributes: topOfDiscardPileAttributes)
+                addSubview(aSetCardView)
+                return
+            }
+        }
         let backgroundRect = UIBezierPath(rect: inFrame)
         SetGameView.boardBackgroundColor.setFill()
         backgroundRect.fill()
         let outterRoundedRect = UIBezierPath(roundedRect: inFrame.zoom(by: 0.95), cornerRadius: inFrame.size.height * SetCardView.cornerRadiusToBoundsHeight)
-        SetCardView.greenCardColor.setFill()
-            outterRoundedRect.fill()
-        let midRoundedRect = UIBezierPath(roundedRect: inFrame.zoom(by: 0.75), cornerRadius: inFrame.size.height * SetCardView.cornerRadiusToBoundsHeight)
-        SetCardView.redCardColor.setFill()
-        midRoundedRect.fill()
-        let innerRoundedRect = UIBezierPath(roundedRect: inFrame.zoom(by: 0.50), cornerRadius: inFrame.size.height * SetCardView.cornerRadiusToBoundsHeight)
-        SetCardView.blueCardColor.setFill()
-        innerRoundedRect.fill()
+        SetGameView.buttonFontColor.setStroke()
+        outterRoundedRect.stroke()
+        SetGameView.backgroundColor.setFill()
+        outterRoundedRect.fill()
     }
     
     @objc
@@ -133,9 +167,6 @@ class SetGameView: UIView {
             sgvc.updateViewFromModel()
         }
     }  //newGameAction()
-
-    
-    
     
 } // setGameView
 

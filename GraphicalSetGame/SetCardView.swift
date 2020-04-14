@@ -16,9 +16,9 @@ class SetCardView: UIView {
     override init(frame: CGRect) { fatalError("init(frame:) has not been implemented") }
 
     required init?(coder aDecoder: NSCoder) { fatalError("init(coder:) has not been implemented") }
-    
-    init(frame: CGRect, cardViewID: Int, cardAttributes:(aShape: SetCard.Shape, aShading: SetCard.Shading, aPipCount: SetCard.PipCount, aCardColor: SetCard.CardColor)) {
 
+    init(frame: CGRect, cardViewID: Int?, cardAttributes:(aShape: SetCard.Shape, aShading: SetCard.Shading, aPipCount: SetCard.PipCount, aCardColor: SetCard.CardColor)) {
+        
         cardViewIdentifier = cardViewID
         shape = cardAttributes.aShape
         shading = cardAttributes.aShading
@@ -37,7 +37,7 @@ class SetCardView: UIView {
         super.init(frame: frame)
     } // init (frame: CGRect, cardViewID: Int, cardAttributes: ...
     
-    private var cardViewIdentifier: Int
+    private var cardViewIdentifier: Int?
     private var cardColor: UIColor
     private var pipCount: Int
     private var shape: SetCard.Shape
@@ -127,15 +127,17 @@ class SetCardView: UIView {
         roundedRect.fill()
 
         if let sgvc = findViewController()  as? SetGameViewController {
-            if ( sgvc.isSelectedCard(cardViewIdentifier) == true ) {
-                UIColor.purple.setStroke()
-                roundedRect.lineWidth = SetCardView.highlightedCardBorderWidth
-                roundedRect.stroke()
-            }
-            if ( sgvc.isMatchedCard(cardViewIdentifier) == true ) {
-                UIColor.orange.setStroke()
-                roundedRect.lineWidth = SetCardView.highlightedCardBorderWidth
-                roundedRect.stroke()
+            if let cardViewID = cardViewIdentifier {
+                if ( sgvc.isSelectedCard(cardViewID) == true ) {
+                    UIColor.purple.setStroke()
+                    roundedRect.lineWidth = SetCardView.highlightedCardBorderWidth
+                    roundedRect.stroke()
+                }
+                if ( sgvc.isMatchedCard(cardViewID) == true ) {
+                    UIColor.orange.setStroke()
+                    roundedRect.lineWidth = SetCardView.highlightedCardBorderWidth
+                    roundedRect.stroke()
+                }
             }
         }
         
@@ -178,7 +180,9 @@ class SetCardView: UIView {
     @objc
     func touchCardAction() {
         if let sgvc = findViewController()  as? SetGameViewController {
-            sgvc.performTouchCard(cardViewIdentifier)
+            if let cardViewID = cardViewIdentifier {
+                sgvc.performTouchCard(cardViewID)
+            }
         }
     } // touchCardAction()
 } // SetCardView

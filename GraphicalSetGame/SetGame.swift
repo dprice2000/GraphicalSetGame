@@ -14,6 +14,7 @@ struct SetGame {
     private(set) var selectedCards = [SetCard]()
     private(set) var matchedCards = [SetCard]()
     private(set) var score = 0
+    private(set) var discardPile = [SetCard]()
     
 
     init(boardSize: Int) {
@@ -35,6 +36,9 @@ struct SetGame {
                     drawnCards.remove(at: indexInDrawnCards)
                 }
             }
+        }
+        for card in matchedCards {
+            discardPile.append(card)
         }
         matchedCards.removeAll()
     } // replaceMatchingCards()
@@ -89,7 +93,8 @@ struct SetGame {
         }
         return true
     } // isSelectionASet () -> Bool
-    
+
+    // perform all actions related to selecting a card.
     mutating func selectCard (atIndex: Int)
     {
         if atIndex >= drawnCards.count { return }
@@ -134,6 +139,7 @@ struct SetGame {
         drawnCards.removeAll()
         selectedCards.removeAll()
         matchedCards.removeAll()
+        discardPile.removeAll()
         score = 0
         gameDeck = SetDeck() // make a new deck
         for _ in 1...12 {
@@ -143,6 +149,11 @@ struct SetGame {
     
     func getAttributesFromCardID(cardID: Int) -> (aShape: SetCard.Shape, aShading: SetCard.Shading, aPipCount: SetCard.PipCount, aCardColor: SetCard.CardColor) {
         return drawnCards[cardID].getCardAttributes()   
+    }
+    
+    func getAttributesForTopOfDiscardPile() -> (aShape: SetCard.Shape, aShading: SetCard.Shading, aPipCount: SetCard.PipCount, aCardColor: SetCard.CardColor)? {
+    
+        return discardPile.last?.getCardAttributes()
     }
     
 } // SetGame()

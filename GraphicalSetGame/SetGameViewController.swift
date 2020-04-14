@@ -83,10 +83,14 @@ class SetGameViewController: UIViewController {
         return game.moreCardsToDeal()
     } //getDrawCardsAbility() -> Bool
     
-    func updateViewFromModel() {
+    func updateViewFromModel() {  // i think this needs to be smarter....
         mainViewOutlet.setNeedsLayout()
         mainViewOutlet.setNeedsDisplay()
     } //updateViewFromModel()
+    
+    func getTopOfDiscardPile() -> (aShape: SetCard.Shape, aShading: SetCard.Shading, aPipCount: SetCard.PipCount, aCardColor: SetCard.CardColor)? {
+        return game.getAttributesForTopOfDiscardPile()
+    }
     
 } //SetGameViewController
 
