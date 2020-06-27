@@ -24,7 +24,7 @@ struct SetDeck
         }
     } // init()
     
-    mutating func draw() -> SetCard? {
+    mutating func drawOneCard() -> SetCard? {
         if cards.count > 0 {
             return cards.remove(at:cards.count.arc4random)
         }

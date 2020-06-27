@@ -19,7 +19,7 @@ struct SetGame {
 
     init(boardSize: Int) {
         for _ in 1...boardSize {
-            if let aCard = gameDeck.draw() { drawnCards.append( aCard ) } // or throw an error?
+            if let aCard = gameDeck.drawOneCard() { drawnCards.append( aCard ) } // or throw an error?
         }
     } // init()
     
@@ -29,8 +29,8 @@ struct SetGame {
     
     private mutating func replaceMatchedCards () {
         for index in matchedCards.indices {
-            if let indexInDrawnCards = drawnCards.index(of:matchedCards[index]) {
-                if let replacementCard = gameDeck.draw() {
+            if let indexInDrawnCards = drawnCards.firstIndex(of:matchedCards[index]) {
+                if let replacementCard = gameDeck.drawOneCard() {
                     drawnCards[indexInDrawnCards] = replacementCard
                 } else {
                     drawnCards.remove(at: indexInDrawnCards)
@@ -54,14 +54,16 @@ struct SetGame {
             return
         }
         for _ in 1...3 {
-            if let aCard = gameDeck.draw() { drawnCards.append(aCard) }
+            if let aCard = gameDeck.drawOneCard() {
+                drawnCards.append(aCard)
+            }
         }
     } // dealThreeCards()
     
     private func isSelectionASet () -> Bool  {
         /*
-         In the set game, each attribute of the cards must either be the same on all cards, or different on all cards.
-         In other words, you cannot have only two cards with the same attribute.  One card with squares, one with
+         In the set game, each card attribute must either be the same on all cards, or different on all cards.
+         In other words, you cannot have one attribute on only two cards.  One card with squares, one with
          triangles and one with circles does not break the set. Two cards with triangles and one with squares breaks the
          set.  Three cards with triangles does not break the set.
          So if the count of any attribute is 2, return false.
@@ -99,32 +101,31 @@ struct SetGame {
     {
         if atIndex >= drawnCards.count { return }
         
-        if selectedCards.count == 3  // selecting a fourth card, clear selection and select new card only
-        {
+        // replace all of the matched cards with new cards and clear the matched cards list
+        if matchedCards.count > 0 {
+            selectedCards.append(drawnCards[atIndex])
+            replaceMatchedCards()
+            return
+        }
+        
+        // selecting a fourth card, clear selection and select new card only
+        if selectedCards.count == 3  {
             selectedCards.removeAll()
             selectedCards.append(drawnCards[atIndex])
             score+=2
             return
         }
-        
-        if matchedCards.count > 0  // replace all of the matched cards with new cards and clear the matched cards list
-        {
-            selectedCards.append(drawnCards[atIndex])
-            replaceMatchedCards()
-            return
-        }
 
-        if selectedCards.contains(drawnCards[atIndex]) == true // unselect already selected card
-        {
-            selectedCards.remove(at: selectedCards.index(of: drawnCards[atIndex])!)
+        // unselect already selected card
+        if selectedCards.contains(drawnCards[atIndex]) == true {
+            selectedCards.remove(at: selectedCards.firstIndex(of: drawnCards[atIndex])!)
             score-=1
             return
         }
         
         score+=1
         selectedCards.append(drawnCards[atIndex])
-        if selectedCards.count == 3 ,  isSelectionASet() == true
-        {
+        if selectedCards.count == 3 ,  isSelectionASet() == true {
             score -= 3
             // move the selected cards into the marched cards list
             for index in selectedCards.indices {
@@ -143,7 +144,9 @@ struct SetGame {
         score = 0
         gameDeck = SetDeck() // make a new deck
         for _ in 1...12 {
-            if let aCard = gameDeck.draw() { drawnCards.append( aCard ) } 
+            if let aCard = gameDeck.drawOneCard() {
+                drawnCards.append(aCard)
+            }
         }
     } // startNewGame()
     

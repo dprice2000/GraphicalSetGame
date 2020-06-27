@@ -21,7 +21,6 @@ class SetGameViewController: UIViewController {
         let swipeRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(performDraw3Cards(_ :)))
         swipeRecognizer.direction = .down
         view.addGestureRecognizer(swipeRecognizer)
-        // Do any additional setup after loading the view, typically from a nib.
     } //viewDidLoad()
 
     func getBoardSize() -> Int {
@@ -44,7 +43,10 @@ class SetGameViewController: UIViewController {
     } // performDraw3Cards()
     
     func performTouchCard(_ cardID: Int) {
-        game.selectCard(atIndex: cardID)
+        game.selectCard(atIndex: cardID) // grow the frame and shrink it back again
+        UIView.animate(withDuration: 1, delay: 0, options: [], animations: {
+            self.mainViewOutlet.cardViews[cardID].transform = CGAffineTransform(scaleX: 1.1, y: 1.1)
+        } )
         updateViewFromModel()
     } // performTouchCards(_ cardID: Int)
 

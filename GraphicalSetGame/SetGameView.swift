@@ -15,7 +15,7 @@ import UIKit
 class SetGameView: UIView {
     
     private var grid = Grid(layout: Grid.Layout.aspectRatio(SetGameView.cardAspectRatio))
-    private var cardViews = [SetCardView]()
+    private(set) var cardViews = [SetCardView]()
     var font = UIFont.preferredFont(forTextStyle: .body).withSize(SetGameView.buttonFontSize)
     private lazy var attributes:[NSAttributedString.Key:Any] = [
         .foregroundColor: SetGameView.buttonFontColor,
