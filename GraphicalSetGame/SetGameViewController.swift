@@ -21,16 +21,17 @@ class SetGameViewController: UIViewController {
     
     private lazy var game = SetGame(boardSize: 12)
     private var cardViews = [SetCardView]()
-    private var grid = Grid(layout: Grid.Layout.aspectRatio(SetGameViewController.cardAspectRatio))
 
     private var drawDeckView: DrawDeckView!
     private var setGameBoardView: SetGameBoardView!
     
 //    private var discardPileView: UIView!
-//    private var newGameButton: UIButton!
-//    private var scoreLabel: UILabel!
+    private var newGameButton: UIButton!
+    private var scoreLabel: UILabel!
     
-    private var score = 0    
+    private var score = 0
+    private var startingCardViewBounds: CGRect!
+    private var discardPileBounds: CGRect!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -48,8 +49,8 @@ class SetGameViewController: UIViewController {
         
         (drawDeckButtonBounds, remainingBounds) =
             setGameButtonBounds.divided(atDistance: setGameButtonBounds.size.height * SetGameViewController.cardAspectRatio, from: CGRectEdge.minXEdge)
-//        (discardPileBounds, remainingBounds) =
-            (_ , remainingBounds) =
+        (discardPileBounds, remainingBounds) =
+        // leave an empty space for the discard pile.  Just move the discarded views to this location
             remainingBounds.divided(atDistance: setGameButtonBounds.size.height * SetGameViewController.cardAspectRatio, from: CGRectEdge.minXEdge)
         (newGameButtonBounds,scoreLabelBounds) =
             remainingBounds.divided(atDistance: remainingBounds.size.height * 0.50, from: CGRectEdge.minYEdge)
@@ -59,14 +60,11 @@ class SetGameViewController: UIViewController {
         let recognizer = UITapGestureRecognizer(target: self, action: #selector(drawDeckViewTapped(_:)))
         drawDeckView.addGestureRecognizer(recognizer)
         mainViewOutlet.addSubview(drawDeckView)
+        startingCardViewBounds = drawDeckButtonBounds
         
-//        let discardPileView = UIView(frame: discardPileBounds)
-//        discardPileView.backgroundColor = SetGameViewController.boardBackgroundColor
-//        renderDiscardPile(inBounds: discardPileView.bounds)
-//        mainViewOutlet.addSubview(discardPileView)
         
         var titleAttributedString = NSMutableAttributedString(string: "New Game", attributes: attributes)
-        let newGameButton = UIButton(type: .custom)
+        newGameButton = UIButton(type: .custom)
         newGameButton.frame = newGameButtonBounds.zoom(by: 0.95)
         newGameButton.backgroundColor = SetGameViewController.backgroundColor
         newGameButton.setAttributedTitle(titleAttributedString, for: UIControl.State.normal)
@@ -74,7 +72,7 @@ class SetGameViewController: UIViewController {
 //        newGameButton.addTarget(self, action: #selector(newGameAction), for: .touchUpInside)
         mainViewOutlet.addSubview(newGameButton)
         
-        let scoreLabel = UILabel()
+        scoreLabel = UILabel()
         titleAttributedString = NSMutableAttributedString(string: "Score: \(score)", attributes: attributes)
         scoreLabel.frame = scoreLabelBounds.zoom(by: 0.95)
         scoreLabel.backgroundColor = SetGameViewController.backgroundColor
@@ -83,28 +81,29 @@ class SetGameViewController: UIViewController {
         mainViewOutlet.addSubview(scoreLabel)
 
         
-//        moveDrawnCardsToBoard()
     } //viewDidLoad()
-
-    private func renderDiscardPile(inBounds: CGRect) {
-        let backgroundRect = UIBezierPath(rect: inBounds)
-        SetGameViewController.boardBackgroundColor.setFill()
-        backgroundRect.fill()
-        let outterRoundedRect = UIBezierPath(roundedRect: inBounds.zoom(by: 0.95), cornerRadius: inBounds.size.height * SetCardView.cornerRadiusToBoundsHeight)
-        SetGameViewController.buttonFontColor.setStroke()
-        outterRoundedRect.lineWidth = 5.0
-        outterRoundedRect.stroke()
-        SetGameViewController.backgroundColor.setFill()
-        outterRoundedRect.fill()
+    
+    override func viewDidAppear(_ animated: Bool) {
+        moveDrawnCardsToBoard()
     }
     
     func moveDrawnCardsToBoard() {
         let cardAttributes = game.drawnCards[0].getCardAttributes()
-        let cardView = SetCardView(frame: grid[0]!, cardViewID: 0, cardAttributes: cardAttributes)
+        let cardView = SetCardView(frame: startingCardViewBounds, cardViewID: 0, cardAttributes: cardAttributes)
         let recognizer = UITapGestureRecognizer(target: self, action: #selector(cardViewTapped(_:)))
         cardView.addGestureRecognizer(recognizer)
-        
         mainViewOutlet.addSubview(cardView)
+        
+        UIViewPropertyAnimator.runningPropertyAnimator(withDuration: 0.8, delay: 0, options: [.curveEaseInOut],
+                                                       animations: {
+                                                        cardView.frame = self.setGameBoardView.grid[0]!
+                                                       }, completion: { finished in
+                                                          UIView.transition(with: cardView, duration: 0.5, options: [.transitionFlipFromLeft],
+                                                                            animations: {
+                                                                              cardView.isFaceUp = true
+                                                                            })
+
+        })
         
     }
     

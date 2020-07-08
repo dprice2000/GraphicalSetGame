@@ -14,18 +14,11 @@ class DrawDeckView: UIView {
 
     override func draw(_ rect: CGRect) {
         let backgroundRect = UIBezierPath(rect: rect)
-        SetGameViewController.boardBackgroundColor.setFill()
+        UIColor.clear.setFill()
+//        SetGameViewController.boardBackgroundColor.setFill()
         backgroundRect.fill()
         if ( isEnabled == true) {
-            let outterRoundedRect = UIBezierPath(roundedRect: rect.zoom(by: 0.95), cornerRadius: rect.size.height * SetCardView.cornerRadiusToBoundsHeight)
-            SetCardView.greenCardColor.setFill()
-            outterRoundedRect.fill()
-            let midRoundedRect = UIBezierPath(roundedRect: rect.zoom(by: 0.75), cornerRadius: rect.size.height * SetCardView.cornerRadiusToBoundsHeight)
-            SetCardView.redCardColor.setFill()
-            midRoundedRect.fill()
-            let innerRoundedRect = UIBezierPath(roundedRect: rect.zoom(by: 0.50), cornerRadius: rect.size.height * SetCardView.cornerRadiusToBoundsHeight)
-            SetCardView.blueCardColor.setFill()
-            innerRoundedRect.fill()
+            SetCardView.drawCardBack(rect)
         } else {
             let outterRoundedRect = UIBezierPath(roundedRect: rect.zoom(by: 0.95), cornerRadius: rect.size.height * SetCardView.cornerRadiusToBoundsHeight)
             SetGameViewController.buttonFontColor.setStroke()

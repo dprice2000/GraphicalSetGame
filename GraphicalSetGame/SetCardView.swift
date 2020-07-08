@@ -42,6 +42,7 @@ class SetCardView: UIView {
     private var pipCount: Int
     private var shape: SetCard.Shape
     private var shading: SetCard.Shading
+    var isFaceUp = false { didSet{ setNeedsDisplay(); setNeedsLayout() } }
     
     func initSetCardViewAttributes(cardViewID: Int) {
         cardViewIdentifier = cardViewID
@@ -116,11 +117,27 @@ class SetCardView: UIView {
         }
         return drawingPath
     } // buildPipInformaion() -> UIBezzierPath
+
+    class func drawCardBack(_ rect: CGRect) { 
+        let outterRoundedRect = UIBezierPath(roundedRect: rect.zoom(by: 0.95), cornerRadius: rect.size.height * SetCardView.cornerRadiusToBoundsHeight)
+        SetCardView.greenCardColor.setFill()
+        outterRoundedRect.fill()
+        let midRoundedRect = UIBezierPath(roundedRect: rect.zoom(by: 0.75), cornerRadius: rect.size.height * SetCardView.cornerRadiusToBoundsHeight)
+        SetCardView.redCardColor.setFill()
+        midRoundedRect.fill()
+        let innerRoundedRect = UIBezierPath(roundedRect: rect.zoom(by: 0.50), cornerRadius: rect.size.height * SetCardView.cornerRadiusToBoundsHeight)
+        SetCardView.blueCardColor.setFill()
+        innerRoundedRect.fill()
+    }
     
     override func draw(_ rect: CGRect) {
         let cardBackground = UIBezierPath(rect: bounds)
         UIColor.clear.setFill()
         cardBackground.fill()
+        if isFaceUp == false {
+            SetCardView.drawCardBack(rect)
+            return
+        }
         let roundedRect = UIBezierPath(roundedRect: bounds, cornerRadius: cornerRadius)
         roundedRect.addClip()
         UIColor.lightGray.setFill()  // move to constants
