@@ -167,24 +167,24 @@ class SetCardView: UIView {
             stripedPath.stroke()
         }
         
-        let cardButton = UIButton(type: .custom)
-        let cardButtonCustomView = UIView(frame: bounds)
-        cardButtonCustomView.isUserInteractionEnabled = false
-        cardButton.frame = bounds
-        cardButton.addSubview(cardButtonCustomView)
-        cardButton.addTarget(self, action: #selector(touchCardAction), for: .touchUpInside)
-        addSubview(cardButton)
+//        let cardButton = UIButton(type: .custom)
+//        let cardButtonCustomView = UIView(frame: bounds)
+//        cardButtonCustomView.isUserInteractionEnabled = false
+//        cardButton.frame = bounds
+//        cardButton.addSubview(cardButtonCustomView)
+//        cardButton.addTarget(self, action: #selector(touchCardAction), for: .touchUpInside)
+//        addSubview(cardButton)
         // Drawing code
     } //draw()
     
-    @objc
-    func touchCardAction() {
-        if let sgvc = findViewController()  as? SetGameViewController {
-            if let cardViewID = cardViewIdentifier {
-                sgvc.performTouchCard(cardViewID)
-            }
-        }
-    } // touchCardAction()
+//    @objc
+//    func touchCardAction() {
+//        if let sgvc = findViewController()  as? SetGameViewController {
+//            if let cardViewID = cardViewIdentifier {
+//                sgvc.performTouchCard(cardViewID)
+//            }
+//        }
+//    } // touchCardAction()
 } // SetCardView
 
 extension SetCardView {

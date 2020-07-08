@@ -12,9 +12,10 @@
 		8E584CB323D7089A0000F9CC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8E584CB223D7089A0000F9CC /* Assets.xcassets */; };
 		8E584CB623D7089A0000F9CC /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8E584CB423D7089A0000F9CC /* LaunchScreen.storyboard */; };
 		E2AA96B624A6CCDC007F60A6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E584CAB23D708970000F9CC /* AppDelegate.swift */; };
+		E2E0DD8C24B588EF00F4E34A /* DrawDeckView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2E0DD8B24B588EF00F4E34A /* DrawDeckView.swift */; };
+		E2E0DD8E24B58C3300F4E34A /* SetGameBoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2E0DD8D24B58C3200F4E34A /* SetGameBoardView.swift */; };
 		E2E4EB3424A6CF9C00DBF7B0 /* SetCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2E4EB2B24A6CF9100DBF7B0 /* SetCard.swift */; };
 		E2E4EB3524A6CF9C00DBF7B0 /* SetGameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2E4EB2C24A6CF9200DBF7B0 /* SetGameViewController.swift */; };
-		E2E4EB3624A6CF9C00DBF7B0 /* SetGameButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2E4EB2D24A6CF9300DBF7B0 /* SetGameButtonView.swift */; };
 		E2E4EB3724A6CF9C00DBF7B0 /* SetGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2E4EB2E24A6CF9300DBF7B0 /* SetGame.swift */; };
 		E2E4EB3824A6CF9C00DBF7B0 /* SetDeck.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2E4EB2F24A6CF9400DBF7B0 /* SetDeck.swift */; };
 		E2E4EB3924A6CF9C00DBF7B0 /* SetCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2E4EB3024A6CF9600DBF7B0 /* SetCardView.swift */; };
@@ -30,9 +31,10 @@
 		8E584CB223D7089A0000F9CC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8E584CB523D7089A0000F9CC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8E584CB723D7089A0000F9CC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		E2E0DD8B24B588EF00F4E34A /* DrawDeckView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawDeckView.swift; sourceTree = "<group>"; };
+		E2E0DD8D24B58C3200F4E34A /* SetGameBoardView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SetGameBoardView.swift; sourceTree = "<group>"; };
 		E2E4EB2B24A6CF9100DBF7B0 /* SetCard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SetCard.swift; sourceTree = "<group>"; };
 		E2E4EB2C24A6CF9200DBF7B0 /* SetGameViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SetGameViewController.swift; sourceTree = "<group>"; };
-		E2E4EB2D24A6CF9300DBF7B0 /* SetGameButtonView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SetGameButtonView.swift; sourceTree = "<group>"; };
 		E2E4EB2E24A6CF9300DBF7B0 /* SetGame.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SetGame.swift; sourceTree = "<group>"; };
 		E2E4EB2F24A6CF9400DBF7B0 /* SetDeck.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SetDeck.swift; sourceTree = "<group>"; };
 		E2E4EB3024A6CF9600DBF7B0 /* SetCardView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SetCardView.swift; sourceTree = "<group>"; };
@@ -78,9 +80,10 @@
 				E2E4EB2F24A6CF9400DBF7B0 /* SetDeck.swift */,
 				E2E4EB2E24A6CF9300DBF7B0 /* SetGame.swift */,
 				E2E4EB3024A6CF9600DBF7B0 /* SetCardView.swift */,
-				E2E4EB2D24A6CF9300DBF7B0 /* SetGameButtonView.swift */,
 				E2E4EB3124A6CF9800DBF7B0 /* SetGameView.swift */,
 				E2E4EB2C24A6CF9200DBF7B0 /* SetGameViewController.swift */,
+				E2E0DD8D24B58C3200F4E34A /* SetGameBoardView.swift */,
+				E2E0DD8B24B588EF00F4E34A /* DrawDeckView.swift */,
 				8E584CB723D7089A0000F9CC /* Info.plist */,
 			);
 			path = GraphicalSetGame;
@@ -170,13 +173,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				E2E4EB3524A6CF9C00DBF7B0 /* SetGameViewController.swift in Sources */,
+				E2E0DD8C24B588EF00F4E34A /* DrawDeckView.swift in Sources */,
 				E2E4EB3424A6CF9C00DBF7B0 /* SetCard.swift in Sources */,
 				E2E4EB3924A6CF9C00DBF7B0 /* SetCardView.swift in Sources */,
+				E2E0DD8E24B58C3300F4E34A /* SetGameBoardView.swift in Sources */,
 				E2E4EB3C24A6CF9C00DBF7B0 /* Grid.swift in Sources */,
 				E2E4EB3724A6CF9C00DBF7B0 /* SetGame.swift in Sources */,
 				E2AA96B624A6CCDC007F60A6 /* AppDelegate.swift in Sources */,
 				E2E4EB3A24A6CF9C00DBF7B0 /* SetGameView.swift in Sources */,
-				E2E4EB3624A6CF9C00DBF7B0 /* SetGameButtonView.swift in Sources */,
 				E2E4EB3824A6CF9C00DBF7B0 /* SetDeck.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -333,7 +337,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = olympicsw.GraphicalSetGame;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -351,7 +355,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = olympicsw.GraphicalSetGame;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
