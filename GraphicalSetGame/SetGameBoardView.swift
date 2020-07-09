@@ -32,7 +32,7 @@ class SetGameBoardView: UIView {
         // add the displayed card views back in to the view.  Note that when the number of cards changes, the bounds of each card view will change
         // so we have to remove and then readd with new bounds.
         for cardViewIndex in displayedCardViews.indices {
-            displayedCardViews[cardViewIndex].bounds = grid[cardViewIndex]!
+            displayedCardViews[cardViewIndex].frame = grid[cardViewIndex]!.zoom(by: 0.95)
             addSubview(displayedCardViews[cardViewIndex])
         }
         

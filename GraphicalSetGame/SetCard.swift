@@ -15,6 +15,9 @@ struct SetCard: CustomStringConvertible, Equatable {
     private(set) var shading : Shading
     private(set) var pipCount : PipCount
     private(set) var cardColor : CardColor
+    var isSelected = false
+    var isMatched = false
+    var isDiscarded = false
     
     static func == (lhs: SetCard, rhs: SetCard) -> Bool {
         if rhs.cardColor != lhs.cardColor { return false }

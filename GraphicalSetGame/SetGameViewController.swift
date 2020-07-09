@@ -25,7 +25,6 @@ class SetGameViewController: UIViewController {
     private var drawDeckView: DrawDeckView!
     private var setGameBoardView: SetGameBoardView!
     
-//    private var discardPileView: UIView!
     private var newGameButton: UIButton!
     private var scoreLabel: UILabel!
     
@@ -42,7 +41,6 @@ class SetGameViewController: UIViewController {
         mainViewOutlet.addSubview(setGameBoardView)
         
         var drawDeckButtonBounds : CGRect
-//        var discardPileBounds : CGRect
         var newGameButtonBounds : CGRect
         var scoreLabelBounds : CGRect
         var remainingBounds : CGRect
@@ -50,7 +48,6 @@ class SetGameViewController: UIViewController {
         (drawDeckButtonBounds, remainingBounds) =
             setGameButtonBounds.divided(atDistance: setGameButtonBounds.size.height * SetGameViewController.cardAspectRatio, from: CGRectEdge.minXEdge)
         (discardPileBounds, remainingBounds) =
-        // leave an empty space for the discard pile.  Just move the discarded views to this location
             remainingBounds.divided(atDistance: setGameButtonBounds.size.height * SetGameViewController.cardAspectRatio, from: CGRectEdge.minXEdge)
         (newGameButtonBounds,scoreLabelBounds) =
             remainingBounds.divided(atDistance: remainingBounds.size.height * 0.50, from: CGRectEdge.minYEdge)
@@ -68,7 +65,6 @@ class SetGameViewController: UIViewController {
         newGameButton.frame = newGameButtonBounds.zoom(by: 0.95)
         newGameButton.backgroundColor = SetGameViewController.backgroundColor
         newGameButton.setAttributedTitle(titleAttributedString, for: UIControl.State.normal)
-//        newGameButton.addSubview(newGameButtonCustomView)
 //        newGameButton.addTarget(self, action: #selector(newGameAction), for: .touchUpInside)
         mainViewOutlet.addSubview(newGameButton)
         
@@ -84,34 +80,112 @@ class SetGameViewController: UIViewController {
     } //viewDidLoad()
     
     override func viewDidAppear(_ animated: Bool) {
-        moveDrawnCardsToBoard()
+        moveDrawnCardToBoard(0)
     }
     
-    func moveDrawnCardsToBoard() {
-        let cardAttributes = game.drawnCards[0].getCardAttributes()
-        let cardView = SetCardView(frame: startingCardViewBounds, cardViewID: 0, cardAttributes: cardAttributes)
+    //
+    func moveDrawnCardToBoard(_ index: Int) {
+        if index >= game.drawnCards.count {
+            return
+        }
+        let cardAttributes = game.drawnCards[index].getCardAttributes()
+        let cardView = SetCardView(frame: startingCardViewBounds, cardViewID: index, cardAttributes: cardAttributes)
         let recognizer = UITapGestureRecognizer(target: self, action: #selector(cardViewTapped(_:)))
         cardView.addGestureRecognizer(recognizer)
-        mainViewOutlet.addSubview(cardView)
+        setGameBoardView.addSubview(cardView)
+        setGameBoardView.displayedCardViews.append(cardView)
         
-        UIViewPropertyAnimator.runningPropertyAnimator(withDuration: 0.8, delay: 0, options: [.curveEaseInOut],
+        UIViewPropertyAnimator.runningPropertyAnimator(withDuration: 0.4, delay: 0, options: [.curveEaseInOut],
                                                        animations: {
-                                                        cardView.frame = self.setGameBoardView.grid[0]!
-                                                       }, completion: { finished in
-                                                          UIView.transition(with: cardView, duration: 0.5, options: [.transitionFlipFromLeft],
-                                                                            animations: {
-                                                                              cardView.isFaceUp = true
-                                                                            })
-
+                                                        cardView.frame = self.setGameBoardView.grid[index]!.zoom(by: 0.95)
+        }, completion: { finished in
+            UIView.transition(with: cardView, duration: 0.5, options: [.transitionFlipFromLeft],
+                              animations: {
+                                cardView.isFaceUp = true
+            }, completion: { finished in
+                self.moveDrawnCardToBoard(index+1)
+            })
+            
         })
-        
     }
     
-    @objc func cardViewTapped(_ recognizer: UITapGestureRecognizer) {
+    func moveReplacementCardToBoard(atIndex index: Int) {
+        let cardAttributes = game.drawnCards[index].getCardAttributes()
+        let cardView = SetCardView(frame: startingCardViewBounds, cardViewID: index, cardAttributes: cardAttributes)
+        let recognizer = UITapGestureRecognizer(target: self, action: #selector(cardViewTapped(_:)))
+        cardView.addGestureRecognizer(recognizer)
+        setGameBoardView.addSubview(cardView)
+        setGameBoardView.displayedCardViews.append(cardView)
         
+        UIViewPropertyAnimator.runningPropertyAnimator(withDuration: 0.4, delay: 0, options: [.curveEaseInOut],
+                                                       animations: {
+                                                        cardView.frame = self.setGameBoardView.grid[index]!.zoom(by: 0.95)
+        }, completion: { finished in
+            UIView.transition(with: cardView, duration: 0.5, options: [.transitionFlipFromLeft],
+                              animations: {
+                                cardView.isFaceUp.toggle()
+            }, completion: { finished in
+                self.replaceNextMatchedCard(atIndex: index+1)
+            })
+        })
+    }
+    
+    func replaceNextMatchedCard(atIndex index: Int) {
+        if game.matchedCards.count == 0 {
+            return
+        }
+        if index >= game.drawnCards.count {
+            return
+        }
+        if game.isCardMatched(index) {
+            game.replaceMatchedCard(atIndex: index)
+            UIViewPropertyAnimator.runningPropertyAnimator(withDuration: 0.6, delay: 0, options: [.curveEaseInOut] ,
+                                                           animations: {
+                                                            self.setGameBoardView.displayedCardViews[index].frame = self.discardPileBounds.zoom(by: 0.95)
+            }, completion: { finished in
+                self.moveReplacementCardToBoard(atIndex: index)
+            })
+        } else {
+            replaceNextMatchedCard(atIndex: index+1)
+        }
+        
+    }
+    // move the old card view to the discard pile
+    // make a new view from the new card at index
+    // move the new card into the space of the old card
+
+    @objc func cardViewTapped(_ recognizer: UITapGestureRecognizer) {
+        if let cardView = recognizer.view as? SetCardView, let cardIndex = cardView.cardViewIdentifier {
+            game.selectCard(atIndex: cardIndex)
+            if game.matchedCards.count == 3 {
+                replaceNextMatchedCard(atIndex: 0)
+                return
+            }
+            for index in game.drawnCards.indices {
+                /* If 3 cards are selected and we select a fourth card, then the selected cards are unselected and the fourth card is selected.  So 4 cards can change state, we need to loop through all of the views and make them show the correct selection. */
+                if game.isCardSelected(index) != setGameBoardView.displayedCardViews[index].isSelected {
+                    UIView.transition(with: cardView, duration: 0.5, options: .transitionCrossDissolve,
+                                      animations: {
+                                        self.setGameBoardView.displayedCardViews[index].isSelected.toggle()
+                    })
+                }
+
+            }
+        }
+            
     }
     
     @objc func drawDeckViewTapped(_ recognizer: UITapGestureRecognizer) {
+        UIView.transition(with: setGameBoardView, duration: 0.5, options: .transitionCrossDissolve,
+                          animations: {
+                            self.setGameBoardView.numberOfCardSlotsAvailable += 3
+                            self.setGameBoardView.setNeedsLayout()
+                            self.setGameBoardView.setNeedsDisplay()
+        }, completion: { finished in
+            self.game.dealThreeCards()
+            self.moveDrawnCardToBoard(self.setGameBoardView.displayedCardViews.count)
+        })
+        
         
     }
     

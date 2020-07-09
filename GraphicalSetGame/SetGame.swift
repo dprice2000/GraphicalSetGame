@@ -9,17 +9,19 @@
 import Foundation
 
 struct SetGame {
-    private var gameDeck = SetDeck()
-    private(set) var drawnCards = [SetCard]()
-    private(set) var selectedCards = [SetCard]()
-    private(set) var matchedCards = [SetCard]()
-    private(set) var score = 0
-    private(set) var discardPile = [SetCard]()
+    var gameDeck = SetDeck()
+    var drawnCards = [SetCard]()
+    var selectedCards = [SetCard]()
+    var matchedCards = [SetCard]()
+    var score = 0
+    var discardPile = [SetCard]()
     
 
     init(boardSize: Int) {
         for _ in 1...boardSize {
-            if let aCard = gameDeck.drawOneCard() { drawnCards.append( aCard ) } // or throw an error?
+            if let aCard = gameDeck.drawOneCard() {
+                drawnCards.append(aCard)
+            }
         }
     } // init()
     
@@ -27,7 +29,16 @@ struct SetGame {
         return gameDeck.cards.count > 0 
     } // moreCardsToDeal() -> Bool
     
-    private mutating func replaceMatchedCards () {
+    mutating func replaceMatchedCard(atIndex index: Int) {
+        if let aCard = gameDeck.drawOneCard() {
+            drawnCards[index] = aCard
+        }
+        if let removeIndex = matchedCards.firstIndex(of: drawnCards[index]) {
+            matchedCards.remove(at: removeIndex)
+        }
+    }
+    
+    mutating func replaceMatchedCards () {
         for index in matchedCards.indices {
             if let indexInDrawnCards = drawnCards.firstIndex(of:matchedCards[index]) {
                 if let replacementCard = gameDeck.drawOneCard() {
@@ -60,7 +71,7 @@ struct SetGame {
         }
     } // dealThreeCards()
     
-    private func isSelectionASet () -> Bool  {
+    func isSelectionASet () -> Bool  {
         /*
          In the set game, each card attribute must either be the same on all cards, or different on all cards.
          In other words, you cannot have one attribute on only two cards.  One card with squares, one with
@@ -159,8 +170,16 @@ struct SetGame {
         return discardPile.last?.getCardAttributes()
     }
     
+    func isCardSelected(_ index: Int) -> Bool {
+        return selectedCards.contains(drawnCards[index])
+    }
+    
+    func isCardMatched(_ index: Int) -> Bool {
+        return matchedCards.contains(drawnCards[index])
+    }
+    
 } // SetGame()
 
 extension SetGame {
-    private static let easyMode = false
+    static let easyMode = false
 }

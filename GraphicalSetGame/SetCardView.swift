@@ -37,13 +37,16 @@ class SetCardView: UIView {
         super.init(frame: frame)
     } // init (frame: CGRect, cardViewID: Int, cardAttributes: ...
     
-    private var cardViewIdentifier: Int?
-    private var cardColor: UIColor
-    private var pipCount: Int
-    private var shape: SetCard.Shape
-    private var shading: SetCard.Shading
-    var isFaceUp = false { didSet{ setNeedsDisplay(); setNeedsLayout() } }
-    
+    var cardViewIdentifier: Int?
+    var cardColor: UIColor
+    var pipCount: Int
+    var shape: SetCard.Shape
+    var shading: SetCard.Shading
+
+    var isFaceUp = false { didSet{ setNeedsDisplay(); setNeedsLayout() } }  // if you flip the card, you need to draw it again.
+    var isSelected = false { didSet{ setNeedsDisplay(); setNeedsLayout() } }  // if you flip the card, you need to draw it again.
+    var isMatched = false { didSet{ setNeedsDisplay(); setNeedsLayout() } }  // if you flip the card, you need to draw it again.
+
     func initSetCardViewAttributes(cardViewID: Int) {
         cardViewIdentifier = cardViewID
         if let sgvc = findViewController()  as? SetGameViewController {
@@ -143,21 +146,17 @@ class SetCardView: UIView {
         UIColor.lightGray.setFill()  // move to constants
         roundedRect.fill()
 
-        if let sgvc = findViewController()  as? SetGameViewController {
-            if let cardViewID = cardViewIdentifier {
-                if ( sgvc.isSelectedCard(cardViewID) == true ) {
-                    UIColor.purple.setStroke()
-                    roundedRect.lineWidth = SetCardView.highlightedCardBorderWidth
-                    roundedRect.stroke()
-                }
-                if ( sgvc.isMatchedCard(cardViewID) == true ) {
-                    UIColor.orange.setStroke()
-                    roundedRect.lineWidth = SetCardView.highlightedCardBorderWidth
-                    roundedRect.stroke()
-                }
-            }
+        if isSelected == true {
+            UIColor.purple.setStroke()
+            roundedRect.lineWidth = SetCardView.highlightedCardBorderWidth
+            roundedRect.stroke()
         }
-        
+        if isMatched ==  true {
+            UIColor.orange.setStroke()
+            roundedRect.lineWidth = SetCardView.highlightedCardBorderWidth
+            roundedRect.stroke()
+        }
+         
         let drawingPipsPath = buildPipInformation()
 
         switch shading {
