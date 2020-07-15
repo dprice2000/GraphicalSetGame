@@ -52,7 +52,16 @@ class SetGameBoardView: UIView {
                 
             })
         }
-    }  // redrawCardViews() 
+    }  // redrawCardViews()
+    
+    func resetForNewGame() {
+        for view in subviews {
+            if let cardView = view as? SetCardView {
+                cardView.removeFromSuperview()
+            }
+        }
+        displayedCardViews.removeAll()
+    }
     
 }
 

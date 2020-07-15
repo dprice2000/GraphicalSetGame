@@ -44,7 +44,6 @@ class SetCardView: UIView {
     var isFaceUp = false { didSet { setNeedsDisplay() } }  // if you flip the card, you need to draw it again.
     var isSelected = false {
         didSet {
-//            setNeedsDisplay()
             UIView.transition(with: self, duration: 0.5, options: .transitionCrossDissolve,
                               animations: {
                                 self.setNeedsDisplay()

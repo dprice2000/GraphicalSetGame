@@ -22,6 +22,7 @@ class SetGameViewController: UIViewController {
     private lazy var game = SetGame(boardSize: 12)
 
     private var drawDeckView: DrawDeckView!
+    private var discardPileView: DiscardPileView!
     private var setGameBoardView: SetGameBoardView!
     
     private var newGameButton: UIButton!
@@ -29,7 +30,7 @@ class SetGameViewController: UIViewController {
     
     private var score = 0 {
         didSet {
-            let labelAttributedString = NSMutableAttributedString(string: "Score: \(score)", attributes: attributes)
+            let labelAttributedString = NSAttributedString(string: "Score: \(score)", attributes: attributes)
             scoreLabel.attributedText = labelAttributedString
         }
     }
@@ -57,23 +58,26 @@ class SetGameViewController: UIViewController {
             remainingFrame.divided(atDistance: remainingFrame.size.height * 0.50, from: CGRectEdge.minYEdge)
 
         drawDeckView = DrawDeckView(frame: drawDeckButtonFrame)
-        drawDeckView.isEnabled = getDrawCardsAbility()
+        drawDeckView.isEnabled = game.moreCardsToDeal()
         let recognizer = UITapGestureRecognizer(target: self, action: #selector(drawDeckViewTapped(_:)))
         drawDeckView.addGestureRecognizer(recognizer)
         mainViewOutlet.addSubview(drawDeckView)
         startingCardViewFrame = drawDeckButtonFrame
         
+        discardPileView = DiscardPileView(frame: discardPileFrame)
+        mainViewOutlet.addSubview(discardPileView)
+        mainViewOutlet.sendSubviewToBack(discardPileView)
         
-        var titleAttributedString = NSMutableAttributedString(string: "New Game", attributes: attributes)
+        var titleAttributedString = NSAttributedString(string: "New Game", attributes: attributes)
         newGameButton = UIButton(type: .custom)
         newGameButton.frame = newGameButtonFrame.zoom(by: 0.95)
         newGameButton.backgroundColor = SetGameViewController.backgroundColor
         newGameButton.setAttributedTitle(titleAttributedString, for: UIControl.State.normal)
-//        newGameButton.addTarget(self, action: #selector(newGameAction), for: .touchUpInside)
+        newGameButton.addTarget(self, action: #selector(newGameButtonTapped), for: .touchUpInside)
         mainViewOutlet.addSubview(newGameButton)
         
         scoreLabel = UILabel()
-        titleAttributedString = NSMutableAttributedString(string: "Score: \(score)", attributes: attributes)
+        titleAttributedString = NSAttributedString(string: "Score: \(score)", attributes: attributes)
         scoreLabel.frame = scoreLabelFrame.zoom(by: 0.95)
         scoreLabel.backgroundColor = SetGameViewController.backgroundColor
         scoreLabel.attributedText = titleAttributedString
@@ -89,6 +93,7 @@ class SetGameViewController: UIViewController {
     // to be displayed.
     func updateViewFromModel() {
         var cardViews = [SetCardView]()
+        var discardedViews = [SetCardView]()
         
         // if the game has matched cards,
         // move their views to the discard pile
@@ -97,6 +102,7 @@ class SetGameViewController: UIViewController {
         if game.matchedCards.count == 3 {
             for matchedCard in game.matchedCards {
                 let matchedCardView = getViewForSetCard(matchedCard)
+                discardedViews.append(matchedCardView)
                 throwAwayMatchedCard(matchedCardView)
             }
             game.replaceMatchedCards()
@@ -108,13 +114,16 @@ class SetGameViewController: UIViewController {
             cardViews.append(cardView)
         }
         
+        score = game.score
         setGameBoardView.displayedCardViews = cardViews
     } //updateViewFromModel()
     
     func getViewForSetCard(_ card: SetCard) -> SetCardView {
         let cardView = SetCardView(frame: startingCardViewFrame, cardAttributes: card.getCardAttributes())
-        let viewForCard = setGameBoardView.displayedCardViews.filter { $0.shape == cardView.shape && $0.shading == cardView.shading && $0.pipCount == cardView.pipCount && $0.cardColor == cardView.cardColor
-        }
+        let viewForCard = setGameBoardView.displayedCardViews.filter { $0.shape == cardView.shape &&
+                                                                       $0.shading == cardView.shading &&
+                                                                       $0.pipCount == cardView.pipCount &&
+                                                                       $0.cardColor == cardView.cardColor }
         
         if viewForCard.isEmpty {
             let recognizer = UITapGestureRecognizer(target: self, action: #selector(cardViewTapped(_:)))
@@ -125,16 +134,19 @@ class SetGameViewController: UIViewController {
         }
     }
 
-    // going to make a discardPileView that will handle the drawing of the top card, and throwing away of SetCardViews
     func throwAwayMatchedCard(_ view: SetCardView) {
         UIViewPropertyAnimator.runningPropertyAnimator(withDuration: 0.6, delay: 0, options: [.curveEaseInOut] ,
                                                        animations: {
                                                         view.setNeedsDisplay()
                                                         view.frame = self.discardPileFrame.zoom(by: 0.95)
+        }, completion: { finished in
+            if self.discardPileView.topCardView != nil {
+                self.discardPileView.topCardView?.removeFromSuperview()
+            }
+            self.discardPileView.topCardView = view
         })
     }
     
-
     @objc func cardViewTapped(_ recognizer: UITapGestureRecognizer) {
         assert(game.drawnCards.count <= setGameBoardView.displayedCardViews.count, "Too many cards, not enough views.")
         
@@ -150,15 +162,25 @@ class SetGameViewController: UIViewController {
             if game.matchedCards.count == 3 {
                 updateViewFromModel()
             }
+            score = game.score
         }
     }
     
     @objc func drawDeckViewTapped(_ recognizer: UITapGestureRecognizer) {
-        if game.moreCardsToDeal() == false { return }
+        if game.moreCardsToDeal() == false {
+            return
+        }
         game.dealThreeCards()
         if game.moreCardsToDeal() == false {
             drawDeckView.isEnabled = false
         }
+        score = game.score
+        updateViewFromModel()
+    }
+    
+    @objc func newGameButtonTapped(_ sender: UIButton) {
+        setGameBoardView.resetForNewGame()
+        game.startNewGame()
         updateViewFromModel()
     }
     
@@ -172,14 +194,6 @@ class SetGameViewController: UIViewController {
         }
     } // performCardShuffle(_ recognizer: UIRotationGestureRecognizer
         
-    func isSelectedCard(_ cardID: Int) -> Bool {
-        return game.selectedCards.contains(game.drawnCards[cardID])
-    } //isSeclectedCard(_ cardID: Int) -> Bool
-    
-    func getDrawCardsAbility() -> Bool {  // can we draw more cards?
-        return game.moreCardsToDeal()
-    } //getDrawCardsAbility() -> Bool
-    
 } //SetGameViewController
 
 extension SetGameViewController {

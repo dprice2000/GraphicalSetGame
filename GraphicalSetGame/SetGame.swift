@@ -14,8 +14,6 @@ struct SetGame {
     var selectedCards = [SetCard]()
     var matchedCards = [SetCard]()
     var score = 0
-    var discardPile = [SetCard]()
-    
 
     init(boardSize: Int) {
         for _ in 1...boardSize {
@@ -29,15 +27,6 @@ struct SetGame {
         return gameDeck.cards.count > 0 
     } // moreCardsToDeal() -> Bool
     
-    mutating func replaceMatchedCard(atIndex index: Int) {
-        if let aCard = gameDeck.drawOneCard() {
-            drawnCards[index] = aCard
-        }
-        if let removeIndex = matchedCards.firstIndex(of: drawnCards[index]) {
-            matchedCards.remove(at: removeIndex)
-        }
-    }
-    
     mutating func replaceMatchedCards () {
         for index in matchedCards.indices {
             if let indexInDrawnCards = drawnCards.firstIndex(of:matchedCards[index]) {
@@ -47,9 +36,6 @@ struct SetGame {
                     drawnCards.remove(at: indexInDrawnCards)
                 }
             }
-        }
-        for card in matchedCards {
-            discardPile.append(card)
         }
         matchedCards.removeAll()
     } // replaceMatchingCards()
@@ -69,6 +55,7 @@ struct SetGame {
                 drawnCards.append(aCard)
             }
         }
+        score += 2 // penalty for adding more cards to the board
     } // dealThreeCards()
     
     func isSelectionASet () -> Bool  {
@@ -123,11 +110,11 @@ struct SetGame {
         if selectedCards.count == 3  {
             selectedCards.removeAll()
             selectedCards.append(drawnCards[atIndex])
-            score+=2
+            score+=1
             return
         }
 
-        // unselect already selected card
+        // unselect previously selected card
         if selectedCards.contains(drawnCards[atIndex]) == true {
             selectedCards.remove(at: selectedCards.firstIndex(of: drawnCards[atIndex])!)
             score-=1
@@ -137,12 +124,14 @@ struct SetGame {
         score+=1
         selectedCards.append(drawnCards[atIndex])
         if selectedCards.count == 3 ,  isSelectionASet() == true {
-            score -= 3
+            score -= 5 // remove 5 points, 1 for each selected card and 2 more for making the set
             // move the selected cards into the marched cards list
             for index in selectedCards.indices {
                 matchedCards.append(selectedCards[index])
             }
             selectedCards.removeAll()
+        } else {
+            score += 2  // failed to make a set, +2 points.  So that's 1 point per selected card and 2 points for the failed set, so + 5 points on a failed set.
         }
     } // selectCard (atIndex: Int)
     
@@ -151,7 +140,6 @@ struct SetGame {
         drawnCards.removeAll()
         selectedCards.removeAll()
         matchedCards.removeAll()
-        discardPile.removeAll()
         score = 0
         gameDeck = SetDeck() // make a new deck
         for _ in 1...12 {
@@ -164,12 +152,7 @@ struct SetGame {
     func getAttributesFromCardID(cardID: Int) -> (aShape: SetCard.Shape, aShading: SetCard.Shading, aPipCount: SetCard.PipCount, aCardColor: SetCard.CardColor) {
         return drawnCards[cardID].getCardAttributes()   
     }
-    
-    func getAttributesForTopOfDiscardPile() -> (aShape: SetCard.Shape, aShading: SetCard.Shading, aPipCount: SetCard.PipCount, aCardColor: SetCard.CardColor)? {
-    
-        return discardPile.last?.getCardAttributes()
-    }
-    
+        
     func isCardSelected(_ index: Int) -> Bool {
         return selectedCards.contains(drawnCards[index])
     }
@@ -181,5 +164,5 @@ struct SetGame {
 } // SetGame()
 
 extension SetGame {
-    static let easyMode = true
+    static let easyMode = false
 }
