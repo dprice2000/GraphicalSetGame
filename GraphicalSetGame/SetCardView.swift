@@ -17,9 +17,8 @@ class SetCardView: UIView {
 
     required init?(coder aDecoder: NSCoder) { fatalError("init(coder:) has not been implemented") }
 
-    init(frame: CGRect, cardViewID: Int?, cardAttributes:(aShape: SetCard.Shape, aShading: SetCard.Shading, aPipCount: SetCard.PipCount, aCardColor: SetCard.CardColor)) {
+    init(frame: CGRect, cardAttributes:(aShape: SetCard.Shape, aShading: SetCard.Shading, aPipCount: SetCard.PipCount, aCardColor: SetCard.CardColor)) {
         
-        cardViewIdentifier = cardViewID
         shape = cardAttributes.aShape
         shading = cardAttributes.aShading
         
@@ -37,38 +36,21 @@ class SetCardView: UIView {
         super.init(frame: frame)
     } // init (frame: CGRect, cardViewID: Int, cardAttributes: ...
     
-    var cardViewIdentifier: Int?
     var cardColor: UIColor
     var pipCount: Int
     var shape: SetCard.Shape
     var shading: SetCard.Shading
 
-    var isFaceUp = false { didSet{ setNeedsDisplay(); setNeedsLayout() } }  // if you flip the card, you need to draw it again.
-    var isSelected = false { didSet{ setNeedsDisplay(); setNeedsLayout() } }  // if you flip the card, you need to draw it again.
-    var isMatched = false { didSet{ setNeedsDisplay(); setNeedsLayout() } }  // if you flip the card, you need to draw it again.
+    var isFaceUp = false { didSet { setNeedsDisplay() } }  // if you flip the card, you need to draw it again.
+    var isSelected = false {
+        didSet {
+//            setNeedsDisplay()
+            UIView.transition(with: self, duration: 0.5, options: .transitionCrossDissolve,
+                              animations: {
+                                self.setNeedsDisplay()
+            })
+        } }  // if you select the card, you need to draw it again.
 
-    func initSetCardViewAttributes(cardViewID: Int) {
-        cardViewIdentifier = cardViewID
-        if let sgvc = findViewController()  as? SetGameViewController {
-            let cardAttributes = sgvc.getAttributesFromCardID(cardViewID)
-            
-            shape = cardAttributes.aShape
-            shading = cardAttributes.aShading
-            
-            switch cardAttributes.aPipCount {
-                case SetCard.PipCount.one: pipCount = 1
-                case SetCard.PipCount.two: pipCount = 2
-                case SetCard.PipCount.three: pipCount = 3
-            }
-        
-            switch cardAttributes.aCardColor {
-                case SetCard.CardColor.first: cardColor = SetCardView.blueCardColor
-                case SetCard.CardColor.second: cardColor = SetCardView.redCardColor
-                case SetCard.CardColor.third: cardColor = SetCardView.greenCardColor
-            }
-        }
-    } //initSetCardViewAttributes(cardViewID: Int)
-    
     private func buildSinglePip(_ pipBounds: CGRect) -> UIBezierPath {
         let centerPoint = CGPoint(x: pipBounds.width/2.0, y: pipBounds.height/2.0 + pipBounds.origin.y)
                                 // if you don't move to pipBounds.origin.y, all of the pips draw on top of eachother
@@ -151,11 +133,6 @@ class SetCardView: UIView {
             roundedRect.lineWidth = SetCardView.highlightedCardBorderWidth
             roundedRect.stroke()
         }
-        if isMatched ==  true {
-            UIColor.orange.setStroke()
-            roundedRect.lineWidth = SetCardView.highlightedCardBorderWidth
-            roundedRect.stroke()
-        }
          
         let drawingPipsPath = buildPipInformation()
 
@@ -183,24 +160,8 @@ class SetCardView: UIView {
             stripedPath.stroke()
         }
         
-//        let cardButton = UIButton(type: .custom)
-//        let cardButtonCustomView = UIView(frame: bounds)
-//        cardButtonCustomView.isUserInteractionEnabled = false
-//        cardButton.frame = bounds
-//        cardButton.addSubview(cardButtonCustomView)
-//        cardButton.addTarget(self, action: #selector(touchCardAction), for: .touchUpInside)
-//        addSubview(cardButton)
-        // Drawing code
     } //draw()
     
-//    @objc
-//    func touchCardAction() {
-//        if let sgvc = findViewController()  as? SetGameViewController {
-//            if let cardViewID = cardViewIdentifier {
-//                sgvc.performTouchCard(cardViewID)
-//            }
-//        }
-//    } // touchCardAction()
 } // SetCardView
 
 extension SetCardView {

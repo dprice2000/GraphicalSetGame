@@ -10,12 +10,11 @@ import UIKit
 
 class DrawDeckView: UIView {
     
-    var isEnabled: Bool?
+    var isEnabled = true { didSet { setNeedsDisplay() } }
 
     override func draw(_ rect: CGRect) {
         let backgroundRect = UIBezierPath(rect: rect)
         UIColor.clear.setFill()
-//        SetGameViewController.boardBackgroundColor.setFill()
         backgroundRect.fill()
         if ( isEnabled == true) {
             SetCardView.drawCardBack(rect)

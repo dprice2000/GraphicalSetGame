@@ -13,32 +13,46 @@ class SetGameBoardView: UIView {
     
     
     var grid = Grid(layout: Grid.Layout.aspectRatio(SetGameBoardView.cardAspectRatio))
-    var displayedCardViews = [SetCardView]()
-    var numberOfCardSlotsAvailable = 0
+    var displayedCardViews = [SetCardView]() { didSet { setNeedsLayout() }}
     
-    override func draw(_ rect: CGRect) {
-        // clean out existing views
-        for view in subviews {
-            view.removeFromSuperview()
-        }
-        // error check and correct
-        if numberOfCardSlotsAvailable < displayedCardViews.count {
-            print("Not enough card slots for card views. -- slots = \(numberOfCardSlotsAvailable) - views \(displayedCardViews.count)")
-            numberOfCardSlotsAvailable = displayedCardViews.count
-        }
-        grid.frame = rect
-        grid.cellCount = numberOfCardSlotsAvailable
-        
-        // add the displayed card views back in to the view.  Note that when the number of cards changes, the bounds of each card view will change
-        // so we have to remove and then readd with new bounds.
-        for cardViewIndex in displayedCardViews.indices {
-            displayedCardViews[cardViewIndex].frame = grid[cardViewIndex]!.zoom(by: 0.95)
-            addSubview(displayedCardViews[cardViewIndex])
-        }
-        
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        redrawCardViews()
     }
     
-
+    func redrawCardViews() {
+        grid.frame = bounds
+        grid.cellCount = displayedCardViews.count
+        
+        for view in subviews {  // clean up SetCardViews that have been moved to the discard pile.  (do this in discardPileView?) do we blow away the views in the discard pile?
+            if let cardView = view as? SetCardView {
+                if !displayedCardViews.contains(cardView) {
+  //                  cardView.removeFromSuperview()
+                    // fix this later
+                }
+            }
+        }
+        
+        for (index, cardView) in displayedCardViews.enumerated() {
+            if subviews.contains(cardView) == false {
+                addSubview(cardView)
+            }
+            UIViewPropertyAnimator.runningPropertyAnimator(withDuration: 0.4, delay: 0, options: [.curveEaseInOut],
+                                                           animations: {
+                                                            cardView.setNeedsDisplay()  // redraw the pips or they get too fat when the view enlarges
+                                                            cardView.frame = self.grid[index]!.zoom(by: 0.95)
+                                                            
+            }, completion: { finished in
+                if cardView.isFaceUp == false {  // don't flip a face up card.  It confuses the player
+                    UIView.transition(with: cardView, duration: 0.5, options: [.transitionFlipFromLeft],
+                                      animations: {
+                                        cardView.isFaceUp = true
+                    })
+                }
+                
+            })
+        }
+    }  // redrawCardViews() 
     
 }
 

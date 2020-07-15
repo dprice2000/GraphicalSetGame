@@ -19,7 +19,6 @@
 		E2E4EB3724A6CF9C00DBF7B0 /* SetGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2E4EB2E24A6CF9300DBF7B0 /* SetGame.swift */; };
 		E2E4EB3824A6CF9C00DBF7B0 /* SetDeck.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2E4EB2F24A6CF9400DBF7B0 /* SetDeck.swift */; };
 		E2E4EB3924A6CF9C00DBF7B0 /* SetCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2E4EB3024A6CF9600DBF7B0 /* SetCardView.swift */; };
-		E2E4EB3A24A6CF9C00DBF7B0 /* SetGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2E4EB3124A6CF9800DBF7B0 /* SetGameView.swift */; };
 		E2E4EB3C24A6CF9C00DBF7B0 /* Grid.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2E4EB3324A6CF9B00DBF7B0 /* Grid.swift */; };
 /* End PBXBuildFile section */
 
@@ -38,7 +37,6 @@
 		E2E4EB2E24A6CF9300DBF7B0 /* SetGame.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SetGame.swift; sourceTree = "<group>"; };
 		E2E4EB2F24A6CF9400DBF7B0 /* SetDeck.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SetDeck.swift; sourceTree = "<group>"; };
 		E2E4EB3024A6CF9600DBF7B0 /* SetCardView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SetCardView.swift; sourceTree = "<group>"; };
-		E2E4EB3124A6CF9800DBF7B0 /* SetGameView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SetGameView.swift; sourceTree = "<group>"; };
 		E2E4EB3324A6CF9B00DBF7B0 /* Grid.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Grid.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -80,7 +78,6 @@
 				E2E4EB2F24A6CF9400DBF7B0 /* SetDeck.swift */,
 				E2E4EB2E24A6CF9300DBF7B0 /* SetGame.swift */,
 				E2E4EB3024A6CF9600DBF7B0 /* SetCardView.swift */,
-				E2E4EB3124A6CF9800DBF7B0 /* SetGameView.swift */,
 				E2E4EB2C24A6CF9200DBF7B0 /* SetGameViewController.swift */,
 				E2E0DD8D24B58C3200F4E34A /* SetGameBoardView.swift */,
 				E2E0DD8B24B588EF00F4E34A /* DrawDeckView.swift */,
@@ -180,7 +177,6 @@
 				E2E4EB3C24A6CF9C00DBF7B0 /* Grid.swift in Sources */,
 				E2E4EB3724A6CF9C00DBF7B0 /* SetGame.swift in Sources */,
 				E2AA96B624A6CCDC007F60A6 /* AppDelegate.swift in Sources */,
-				E2E4EB3A24A6CF9C00DBF7B0 /* SetGameView.swift in Sources */,
 				E2E4EB3824A6CF9C00DBF7B0 /* SetDeck.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
