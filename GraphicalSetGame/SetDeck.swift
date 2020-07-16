@@ -32,6 +32,7 @@ struct SetDeck
     } // draw() -> Card?
 } // SetDeck
 
+
 extension Int {
     var arc4random: Int {
         if self > 0 {

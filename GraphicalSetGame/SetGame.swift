@@ -164,5 +164,5 @@ struct SetGame {
 } // SetGame()
 
 extension SetGame {
-    static let easyMode = false
+    static let easyMode = true
 }

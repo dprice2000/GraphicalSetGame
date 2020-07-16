@@ -34,6 +34,8 @@ class SetCardView: UIView {
         case SetCard.CardColor.third: cardColor = SetCardView.greenCardColor
         }
         super.init(frame: frame)
+        layer.masksToBounds = true
+
     } // init (frame: CGRect, cardViewID: Int, cardAttributes: ...
     
     var cardColor: UIColor
@@ -45,8 +47,8 @@ class SetCardView: UIView {
     var isSelected = false {
         didSet {
             UIView.transition(with: self, duration: 0.5, options: .transitionCrossDissolve,
-                              animations: {
-                                self.setNeedsDisplay()
+                              animations: { [weak self] in
+                                self?.setNeedsDisplay()
             })
         } }  // if you select the card, you need to draw it again.
 
@@ -115,6 +117,8 @@ class SetCardView: UIView {
     }
     
     override func draw(_ rect: CGRect) {
+        layer.cornerRadius = cornerRadius
+
         let cardBackground = UIBezierPath(rect: bounds)
         UIColor.clear.setFill()
         cardBackground.fill()
@@ -129,7 +133,7 @@ class SetCardView: UIView {
 
         if isSelected == true {
             UIColor.purple.setStroke()
-            roundedRect.lineWidth = SetCardView.highlightedCardBorderWidth
+            roundedRect.lineWidth = highlightedCardBorderWidth
             roundedRect.stroke()
         }
          
@@ -141,14 +145,14 @@ class SetCardView: UIView {
             drawingPipsPath.fill()
         case SetCard.Shading.border:
             cardColor.setStroke()
-            drawingPipsPath.lineWidth = SetCardView.borderShadingLineWidth
+            drawingPipsPath.lineWidth = borderShadingLineWidth
             drawingPipsPath.stroke()
         case SetCard.Shading.shaded:
             cardColor.setStroke()
             drawingPipsPath.stroke()
             drawingPipsPath.addClip()
             let stripedPath = UIBezierPath()
-            stripedPath.lineWidth = SetCardView.stripedPipLineWidth  // gotta scale this for edge case of 81 cards drawn
+            stripedPath.lineWidth = stripedPipLineWidth  // gotta scale this for edge case of 81 cards drawn
             
             var currentX:CGFloat = 0.0
             while currentX < frame.size.width {
@@ -165,15 +169,21 @@ class SetCardView: UIView {
 
 extension SetCardView {
     static let cornerRadiusToBoundsHeight: CGFloat = 0.06
-    private var cornerRadius : CGFloat {
+    var cornerRadius : CGFloat {
         return bounds.size.height * SetCardView.cornerRadiusToBoundsHeight
     }
-    static private let borderShadingLineWidth : CGFloat = 5.0
+    private var borderShadingLineWidth : CGFloat {
+        return bounds.height * 0.025
+    }
     static private let pipSizeRatio : CGFloat = 0.25
-    static private let stripedPipLineWidth : CGFloat = 2.0
+    private var stripedPipLineWidth : CGFloat {
+        return bounds.height * 0.01
+    }
     static private let stripedPipLineSpacingRatio : CGFloat = 0.07
     
-    static let highlightedCardBorderWidth : CGFloat = 15.0
+    private var highlightedCardBorderWidth : CGFloat {
+        return bounds.height * 0.075
+    }
     static let blueCardColor = #colorLiteral(red: 0.01680417731, green: 0.1983509958, blue: 1, alpha: 1)
     static let redCardColor = #colorLiteral(red: 0.5725490451, green: 0, blue: 0.2313725501, alpha: 1)
     static let greenCardColor = #colorLiteral(red: 0.1960784346, green: 0.3411764801, blue: 0.1019607857, alpha: 1)
