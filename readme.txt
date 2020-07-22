@@ -6,4 +6,5 @@ https://itunes.apple.com/us/course/developing-ios-11-apps-with-swift/id130927531
 This is my implementation of assignments 2, 3 and 4.
 
 To Do:
-Assignment 4 is incomplete.  Need to implement the animations.
+
+landscape mode

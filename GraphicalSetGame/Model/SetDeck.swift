@@ -12,6 +12,7 @@ struct SetDeck
 {
     private(set) var cards = [SetCard]()
     
+    // the deck consists of one card for every combination of the card attributes
     init () {
         for shape in SetCard.Shape.all {
             for shading in SetCard.Shading.all {
@@ -24,6 +25,7 @@ struct SetDeck
         }
     } // init()
     
+    // remove one random card from the deck and return it to the caller
     mutating func drawOneCard() -> SetCard? {
         if cards.count > 0 {
             return cards.remove(at:cards.count.arc4random)
@@ -33,15 +35,5 @@ struct SetDeck
 } // SetDeck
 
 
-extension Int {
-    var arc4random: Int {
-        if self > 0 {
-            return Int(arc4random_uniform(UInt32(self)))
-        } else if self < 0 {
-            return -Int(arc4random_uniform(UInt32(self)))
-        } else {
-            return 0
-        }
-    } // arc4random()
-}  // extension
+
 

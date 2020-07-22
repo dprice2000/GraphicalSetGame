@@ -17,6 +17,7 @@ class SetCardView: UIView {
 
     required init?(coder aDecoder: NSCoder) { fatalError("init(coder:) has not been implemented") }
 
+    // init with a frame and card attributes
     init(frame: CGRect, cardAttributes:(aShape: SetCard.Shape, aShading: SetCard.Shading, aPipCount: SetCard.PipCount, aCardColor: SetCard.CardColor)) {
         
         shape = cardAttributes.aShape
@@ -29,33 +30,36 @@ class SetCardView: UIView {
         }
         
         switch cardAttributes.aCardColor {
-        case SetCard.CardColor.first: cardColor = SetCardView.blueCardColor
-        case SetCard.CardColor.second: cardColor = SetCardView.redCardColor
-        case SetCard.CardColor.third: cardColor = SetCardView.greenCardColor
+        case SetCard.CardColor.first: cardColor = Constants.blueCardColor
+        case SetCard.CardColor.second: cardColor = Constants.redCardColor
+        case SetCard.CardColor.third: cardColor = Constants.greenCardColor
         }
         super.init(frame: frame)
         layer.masksToBounds = true
 
     } // init (frame: CGRect, cardViewID: Int, cardAttributes: ...
     
-    var cardColor: UIColor
-    var pipCount: Int
-    var shape: SetCard.Shape
-    var shading: SetCard.Shading
+    private(set) var cardColor: UIColor
+    private(set) var pipCount: Int
+    private(set) var shape: SetCard.Shape
+    private(set) var shading: SetCard.Shading
 
     var isFaceUp = false { didSet { setNeedsDisplay() } }  // if you flip the card, you need to draw it again.
     var isSelected = false {
+        // when the selected state toggles, fade in or out the card border
         didSet {
-            UIView.transition(with: self, duration: 0.5, options: .transitionCrossDissolve,
+            UIView.transition(with: self, duration: Constants.fadeDuration, options: .transitionCrossDissolve,
                               animations: { [weak self] in
                                 self?.setNeedsDisplay()
             })
-        } }  // if you select the card, you need to draw it again.
+        }
+    } // isSelected
 
+    // return the a UIBezierPath that represents a single pip for the view, based on the shape
     private func buildSinglePip(_ pipBounds: CGRect) -> UIBezierPath {
         let centerPoint = CGPoint(x: pipBounds.width/2.0, y: pipBounds.height/2.0 + pipBounds.origin.y)
                                 // if you don't move to pipBounds.origin.y, all of the pips draw on top of eachother
-        let shapeSize = pipBounds.width * SetCardView.pipSizeRatio
+        let shapeSize = pipBounds.width * Constants.pipSizeRatio
         var path: UIBezierPath
         
         switch shape {
@@ -81,6 +85,7 @@ class SetCardView: UIView {
         return path
     } // buildSinglePip(_ pipBounds: CGRect) -> UIBezzierPath
     
+    // build a path to draw all of the pips on the card, based on the pipCount
     private func buildPipInformation() -> UIBezierPath {
         let drawingPath = UIBezierPath()
         
@@ -104,41 +109,55 @@ class SetCardView: UIView {
         return drawingPath
     } // buildPipInformaion() -> UIBezzierPath
 
+    // draw concentric ellipses in each of the card colors to represent the back of a card
+    // made this function available as a class function so that the DrawDeckView can reuse the
+    // code
     class func drawCardBack(_ rect: CGRect) { 
-        let outterRoundedRect = UIBezierPath(roundedRect: rect.zoom(by: 0.95), cornerRadius: rect.size.height * SetCardView.cornerRadiusToBoundsHeight)
-        SetCardView.greenCardColor.setFill()
+        let outterRoundedRect = UIBezierPath(roundedRect: rect.zoom(by: Constants.cardBackOuterRingScale), cornerRadius: rect.size.height * Constants.cornerRadiusToBoundsHeight)
+        Constants.greenCardColor.setFill()
         outterRoundedRect.fill()
-        let midRoundedRect = UIBezierPath(roundedRect: rect.zoom(by: 0.75), cornerRadius: rect.size.height * SetCardView.cornerRadiusToBoundsHeight)
-        SetCardView.redCardColor.setFill()
+        let midRoundedRect = UIBezierPath(roundedRect: rect.zoom(by: Constants.cardBackMiddleRingScale), cornerRadius: rect.size.height * Constants.cornerRadiusToBoundsHeight)
+        Constants.redCardColor.setFill()
         midRoundedRect.fill()
-        let innerRoundedRect = UIBezierPath(roundedRect: rect.zoom(by: 0.50), cornerRadius: rect.size.height * SetCardView.cornerRadiusToBoundsHeight)
-        SetCardView.blueCardColor.setFill()
+        let innerRoundedRect = UIBezierPath(roundedRect: rect.zoom(by: Constants.cardBackInnerRingScale), cornerRadius: rect.size.height * Constants.cornerRadiusToBoundsHeight)
+        Constants.blueCardColor.setFill()
         innerRoundedRect.fill()
-    }
+    } // drawCardBack()
     
+    // render the view for the card.
     override func draw(_ rect: CGRect) {
+        // resize the corner radius each time the card is drawn.  As more cards
+        // are added to the board, they get smaller.  Corner radius needs to be
+        // recalculated.
         layer.cornerRadius = cornerRadius
 
         let cardBackground = UIBezierPath(rect: bounds)
         UIColor.clear.setFill()
         cardBackground.fill()
+        
+        // if we are not face up, just draw the card back and return.
         if isFaceUp == false {
             SetCardView.drawCardBack(rect)
             return
         }
+        
+        // fill in the background color of the card
         let roundedRect = UIBezierPath(roundedRect: bounds, cornerRadius: cornerRadius)
         roundedRect.addClip()
-        UIColor.lightGray.setFill()  // move to constants
+        Constants.cardBackgroundColor.setFill()
         roundedRect.fill()
 
+        // if we are selected, draw a border around the card
         if isSelected == true {
-            UIColor.purple.setStroke()
+            Constants.borderColor.setStroke()
             roundedRect.lineWidth = highlightedCardBorderWidth
             roundedRect.stroke()
         }
          
+        // build the path for the pips
         let drawingPipsPath = buildPipInformation()
 
+        // add the shading element to the path and draw it
         switch shading {
         case SetCard.Shading.filled:
             cardColor.setFill()
@@ -152,13 +171,13 @@ class SetCardView: UIView {
             drawingPipsPath.stroke()
             drawingPipsPath.addClip()
             let stripedPath = UIBezierPath()
-            stripedPath.lineWidth = stripedPipLineWidth  // gotta scale this for edge case of 81 cards drawn
+            stripedPath.lineWidth = stripedPipLineWidth
             
             var currentX:CGFloat = 0.0
             while currentX < frame.size.width {
                 stripedPath.move(to: CGPoint(x: currentX, y: 0))
                 stripedPath.addLine(to: CGPoint(x: currentX, y: bounds.size.height))
-                currentX += SetCardView.stripedPipLineSpacingRatio * bounds.size.width
+                currentX += Constants.stripedPipLineSpacingRatio * bounds.size.width
             }
             stripedPath.stroke()
         }
@@ -167,24 +186,3 @@ class SetCardView: UIView {
     
 } // SetCardView
 
-extension SetCardView {
-    static let cornerRadiusToBoundsHeight: CGFloat = 0.06
-    var cornerRadius : CGFloat {
-        return bounds.size.height * SetCardView.cornerRadiusToBoundsHeight
-    }
-    private var borderShadingLineWidth : CGFloat {
-        return bounds.height * 0.025
-    }
-    static private let pipSizeRatio : CGFloat = 0.25
-    private var stripedPipLineWidth : CGFloat {
-        return bounds.height * 0.01
-    }
-    static private let stripedPipLineSpacingRatio : CGFloat = 0.07
-    
-    private var highlightedCardBorderWidth : CGFloat {
-        return bounds.height * 0.075
-    }
-    static let blueCardColor = #colorLiteral(red: 0.01680417731, green: 0.1983509958, blue: 1, alpha: 1)
-    static let redCardColor = #colorLiteral(red: 0.5725490451, green: 0, blue: 0.2313725501, alpha: 1)
-    static let greenCardColor = #colorLiteral(red: 0.1960784346, green: 0.3411764801, blue: 0.1019607857, alpha: 1)
-} //SetCardView constants

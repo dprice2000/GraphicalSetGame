@@ -6,10 +6,6 @@
 //  Copyright © 2020 Dave. All rights reserved.
 //
 
-// add snap behavior
-// some odd drawing errors not rounding corners
-// round the label and button
-// add the flyaway behavior
 
 import UIKit
 
@@ -17,19 +13,18 @@ class SetGameViewController: UIViewController, UIDynamicAnimatorDelegate {
 
     @IBOutlet weak var mainViewOutlet: UIView!
 
-    var font = UIFont.preferredFont(forTextStyle: .body).withSize(SetGameViewController.buttonFontSize)
+    private var font = UIFont.preferredFont(forTextStyle: .body).withSize(Constants.buttonFontSize)
     private lazy var attributes:[NSAttributedString.Key:Any] = [
-        .foregroundColor: SetGameViewController.buttonFontColor,
-        .backgroundColor: SetGameViewController.backgroundColor,
+        .foregroundColor: Constants.buttonFontColor,
+        .backgroundColor: Constants.cardBackgroundColor,
         .font:font
     ]
     
-    private lazy var game = SetGame(boardSize: 12)
+    private lazy var game = SetGame(boardSize: Constants.startingBoardSize)
 
     private var drawDeckView: DrawDeckView!
     private var discardPileView: DiscardPileView!
     private var setGameBoardView: SetGameBoardView!
-    
     private var newGameButton: UIButton!
     private var scoreLabel: UILabel!
     
@@ -48,7 +43,10 @@ class SetGameViewController: UIViewController, UIDynamicAnimatorDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        mainViewOutlet.backgroundColor = SetGameViewController.boardBackgroundColor
+        
+        mainViewOutlet.backgroundColor = Constants.boardBackgroundColor
+        
+        // split the view for the card board and the button area
         let (setGameBoardFrame, setGameButtonFrame) = mainViewOutlet.bounds.divided(atDistance: boardBoundry, from: CGRectEdge.minYEdge)
         setGameBoardView = SetGameBoardView(frame: setGameBoardFrame)
         mainViewOutlet.addSubview(setGameBoardView)
@@ -58,13 +56,15 @@ class SetGameViewController: UIViewController, UIDynamicAnimatorDelegate {
         var scoreLabelFrame : CGRect
         var remainingFrame : CGRect
         
+        // define the frame for the draw deck, discard pile, new game button and score label
         (drawDeckButtonFrame, remainingFrame) =
-            setGameButtonFrame.divided(atDistance: setGameButtonFrame.size.height * SetGameViewController.cardAspectRatio, from: CGRectEdge.minXEdge)
+            setGameButtonFrame.divided(atDistance: setGameButtonFrame.size.height * Constants.cardAspectRatio, from: CGRectEdge.minXEdge)
         (discardPileFrame, remainingFrame) =
-            remainingFrame.divided(atDistance: setGameButtonFrame.size.height * SetGameViewController.cardAspectRatio, from: CGRectEdge.minXEdge)
+            remainingFrame.divided(atDistance: setGameButtonFrame.size.height * Constants.cardAspectRatio, from: CGRectEdge.minXEdge)
         (newGameButtonFrame,scoreLabelFrame) =
             remainingFrame.divided(atDistance: remainingFrame.size.height * 0.50, from: CGRectEdge.minYEdge)
 
+        // create the draw deck view, give it a tap recognizer and push behind any views that get drawn in the same space
         drawDeckView = DrawDeckView(frame: drawDeckButtonFrame)
         drawDeckView.isEnabled = game.moreCardsToDeal()
         let recognizer = UITapGestureRecognizer(target: self, action: #selector(drawDeckViewTapped(_:)))
@@ -73,30 +73,34 @@ class SetGameViewController: UIViewController, UIDynamicAnimatorDelegate {
         mainViewOutlet.sendSubviewToBack(drawDeckView)
         startingCardViewFrame = drawDeckButtonFrame
         
+        // create the discard pile view and push it behind any ciews that get drawn in the same space
         discardPileView = DiscardPileView(frame: discardPileFrame)
         mainViewOutlet.addSubview(discardPileView)
         mainViewOutlet.sendSubviewToBack(discardPileView)
         
+        // make the new game button
         var titleAttributedString = NSAttributedString(string: "New Game", attributes: attributes)
         newGameButton = UIButton(type: .custom)
         newGameButton.frame = newGameButtonFrame.zoom(by: 0.95)
         newGameButton.layer.cornerRadius = 15
         newGameButton.layer.masksToBounds = true
-        newGameButton.backgroundColor = SetGameViewController.backgroundColor
+        newGameButton.backgroundColor = Constants.cardBackgroundColor
         newGameButton.setAttributedTitle(titleAttributedString, for: UIControl.State.normal)
         newGameButton.addTarget(self, action: #selector(newGameButtonTapped), for: .touchUpInside)
         mainViewOutlet.addSubview(newGameButton)
         
+        // make the score label
         scoreLabel = UILabel()
         titleAttributedString = NSAttributedString(string: "Score: \(score)", attributes: attributes)
         scoreLabel.frame = scoreLabelFrame.zoom(by: 0.95)
-        scoreLabel.backgroundColor = SetGameViewController.backgroundColor
+        scoreLabel.backgroundColor = Constants.cardBackgroundColor
         scoreLabel.attributedText = titleAttributedString
         scoreLabel.textAlignment = NSTextAlignment.center
         scoreLabel.layer.cornerRadius = 15
         scoreLabel.layer.masksToBounds = true
         mainViewOutlet.addSubview(scoreLabel)
         
+        // create the dynamic animator and bounce behavior
         animator = UIDynamicAnimator(referenceView: setGameBoardView)
         bounceBehavior = BounceBehavior(in: animator)
         animator.delegate = self
@@ -106,23 +110,26 @@ class SetGameViewController: UIViewController, UIDynamicAnimatorDelegate {
         updateViewFromModel()
     }
 
-    // build an array of all set card views to be displayed and pass it to the SetGameBoardView
-    // to be displayed.
-    func updateViewFromModel() {
-        var cardViews = [SetCardView]()
-        var discardedViews = [SetCardView]()
+    private func updateViewFromModel() {
+        // build an array of all set card views to be displayed and pass it to the SetGameBoardView
+        // to be displayed.
         
-        // if the game has matched cards,
-        // move their views to the discard pile
-        // have the game replace them now, so we can generate their views.
+        var cardViews = [SetCardView]()
+        
+        // if the game has matched cards, move their views to the discard pile
+        // have the game replace them now, so when we fill the cardViews array, new views
+        // will be generated for the replacement card.
         
         if game.matchedCards.count == 3 {
             for matchedCard in game.matchedCards {
                 let matchedCardView = getViewForSetCard(matchedCard)
-                discardedViews.append(matchedCardView)
                 throwAwayMatchedCard(matchedCardView)
             }
             game.replaceMatchedCards()
+            // disable the draw deck if we are out of cardw to draw
+            if game.moreCardsToDeal() == false {
+                drawDeckView.isEnabled = false
+            }
         }
 
         // get the views for all of the drawn cards
@@ -131,11 +138,16 @@ class SetGameViewController: UIViewController, UIDynamicAnimatorDelegate {
             cardViews.append(cardView)
         }
         
+        // update the displayed score and setGameBoardView
         score = game.score
         setGameBoardView.displayedCardViews = cardViews
     } //updateViewFromModel()
     
-    func getViewForSetCard(_ card: SetCard) -> SetCardView {
+    private func getViewForSetCard(_ card: SetCard) -> SetCardView {
+        // make a card view based on the attributes of the card.
+        // if a view with these attributed already exists, return the exiting view
+        // otherwise finsihed setting up the new view and return it
+        
         let cardView = SetCardView(frame: startingCardViewFrame, cardAttributes: card.getCardAttributes())
         let viewForCard = setGameBoardView.displayedCardViews.filter { $0.shape == cardView.shape &&
                                                                        $0.shading == cardView.shading &&
@@ -149,19 +161,25 @@ class SetGameViewController: UIViewController, UIDynamicAnimatorDelegate {
         } else {
             return viewForCard[0]
         }
-    }
+    } // getViewForSetCard (....) -> SetCardView
 
-    func throwAwayMatchedCard(_ view: SetCardView) {
+    private func throwAwayMatchedCard(_ view: SetCardView) {
+        // add the card to the animator
+        // set a timer for the card to be bouncing
+        // move the view to the discard pile
+        // clean up unneeded fiews on the discard pile
         setGameBoardView.bringSubviewToFront(view)
         bounceBehavior.addItem(view)
 
-        Timer.scheduledTimer(withTimeInterval: 1, repeats: false) { timer in
+        Timer.scheduledTimer(withTimeInterval: Constants.bounceDuration, repeats: false) { timer in
             self.bounceBehavior.removeItem(view)
             self.setGameBoardView.bringSubviewToFront(view)
-            UIViewPropertyAnimator.runningPropertyAnimator(withDuration: 0.6, delay: 0.1, options: [.curveEaseInOut] ,
+            UIViewPropertyAnimator.runningPropertyAnimator(withDuration: Constants.moveToDiscardDuration,
+                                                           delay: Constants.moveToDiscardDelay,
+                                                           options: [.curveEaseInOut] ,
                                                                        animations: {
                                                                         view.transform = .identity
-                                                                        view.frame = self.discardPileFrame.zoom(by: 0.95)
+                                                                        view.frame = self.discardPileFrame.zoom(by: Constants.stdFrameZoom)
                                                                         self.addSnapBehavior(item: view)
                                                                         view.setNeedsDisplay()
             }, completion: { finished in
@@ -172,28 +190,30 @@ class SetGameViewController: UIViewController, UIDynamicAnimatorDelegate {
                 view.setNeedsDisplay()
             })
         }
-    
-    }
+    } // throwAwayMatchedCard(....)
  
-    func addSnapBehavior(item: UIDynamicItem) {
+    private func addSnapBehavior(item: UIDynamicItem) {
+        // let the card wiggle a little when it gets to the discard pile
         let snap = UISnapBehavior(item: item, snapTo: discardPileView.center)
-        snap.damping = 0.5
+        snap.damping = Constants.snapDamping
         snap.action = {
             item.transform = .identity
             item.center = self.discardPileView.center
         }
         animator.addBehavior(snap)
-    }
+    } // addSnapBehavior(....)
+    
     @objc func cardViewTapped(_ recognizer: UITapGestureRecognizer) {
+        // handle taps on the card views
         assert(game.drawnCards.count <= setGameBoardView.displayedCardViews.count, "Too many cards, not enough views.")
         
         if let cardView = recognizer.view as? SetCardView,
             let cardViewIndex = setGameBoardView.displayedCardViews.firstIndex(of: cardView) {
             game.selectCard(atIndex: cardViewIndex)
             for index in game.drawnCards.indices {
-                /* If 3 cards are selected and we select a fourth card, then the selected cards are unselected
-                 and the fourth card is selected.  So 4 cards can change state, we need to loop through all of
-                 the views and make them show the correct selection. */
+            // If 3 cards are selected and we tap a fourth card, then the selected cards are unselected
+            // and the fourth card is selected.  So 4 cards can change state, we need to loop through all of
+            // the views and make them show in the correct state. 
                 if game.isCardSelected(index) != setGameBoardView.displayedCardViews[index].isSelected {
                     setGameBoardView.displayedCardViews[index].isSelected.toggle()
                 }
@@ -203,26 +223,27 @@ class SetGameViewController: UIViewController, UIDynamicAnimatorDelegate {
             }
             score = game.score
         }
-    }
+    } // cardViewTapped(....)
     
     @objc func drawDeckViewTapped(_ recognizer: UITapGestureRecognizer) {
-        if game.moreCardsToDeal() == false {
+        // handle taps on the draw deck
+        if game.moreCardsToDeal() == false { // nothing to do
             return
         }
         game.dealThreeCards()
-        if game.moreCardsToDeal() == false {
+        if game.moreCardsToDeal() == false {  // disable if the draw deck is empty
             drawDeckView.isEnabled = false
         }
         score = game.score
         updateViewFromModel()
-    }
+    } // drawDeckTapped(....)
     
     @objc func newGameButtonTapped(_ sender: UIButton) {
+        // clean up and start a new game
         setGameBoardView.resetForNewGame()
-        
         game.startNewGame()
         updateViewFromModel()
-    }
+    } // newGameButtonTapped(....)
     
     @objc func performCardShuffle(_ recognizer : UIRotationGestureRecognizer) {
         switch recognizer.state {
@@ -236,40 +257,5 @@ class SetGameViewController: UIViewController, UIDynamicAnimatorDelegate {
         
 } //SetGameViewController
 
-extension SetGameViewController {
-    static private let cardAspectRatio : CGFloat = 0.4572 // (93.5/204.5)
-    static let boardHeightToBoundsRatio: CGFloat = 0.75
-    var boardBoundry: CGFloat {
-        return mainViewOutlet.bounds.size.height * SetGameViewController.boardHeightToBoundsRatio
-    }
-    static let buttonFontColor = #colorLiteral(red: 0.5725490451, green: 0, blue: 0.2313725501, alpha: 1)
-    static let buttonFontSize : CGFloat = 30.0
-    static let backgroundColor = UIColor.lightGray
-    static let boardBackgroundColor = UIColor.black
-} //SetGameViewController Constants
 
-extension CGRect {
-    func zoom(by scale: CGFloat) -> CGRect {
-        let newWidth = width * scale
-        let newHeight = height * scale
-        return insetBy(dx: (width - newWidth) / 2, dy: (height - newHeight) / 2 )
-    }
-} // extension CGRect
 
-extension CGPoint {
-    func offsetBy(dx: CGFloat, dy: CGFloat) -> CGPoint {
-        return CGPoint(x: x+dx, y: y+dy)
-    }
-} // extension CGPoint
-
-extension CGFloat {
-    var arc4random: CGFloat {
-        if self > 0 {
-            return CGFloat(arc4random_uniform(UInt32(self)))
-        } else if self < 0 {
-            return -CGFloat(arc4random_uniform(UInt32(abs(self))))
-        } else {
-            return 0
-        }
-    }
-}

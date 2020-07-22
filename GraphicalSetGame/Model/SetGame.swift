@@ -9,24 +9,33 @@
 import Foundation
 
 struct SetGame {
-    var gameDeck = SetDeck()
-    var drawnCards = [SetCard]()
-    var selectedCards = [SetCard]()
-    var matchedCards = [SetCard]()
-    var score = 0
+    private var gameDeck = SetDeck()
+    private(set) var drawnCards = [SetCard]()
+    private(set) var selectedCards = [SetCard]()
+    private(set) var matchedCards = [SetCard]()
+    private(set) var score: Int
+    private var startingBoardSize: Int
 
+    // create a new game.  Draw the initial cards into play.
     init(boardSize: Int) {
-        for _ in 1...boardSize {
+        startingBoardSize = boardSize
+        score = 0
+        for _ in 1...startingBoardSize {
             if let aCard = gameDeck.drawOneCard() {
                 drawnCards.append(aCard)
             }
         }
     } // init()
     
+    //  Do we have more cards to deal?
     func moreCardsToDeal() -> Bool {
         return gameDeck.cards.count > 0 
     } // moreCardsToDeal() -> Bool
-    
+  
+    // remove the matched cards from the drawn cards array, replace the
+    // card in that location with a new card.  If we can't draw another card
+    // the game deck is empty.  In that case, the drawnCard array gets smaller
+    // finally empty out the matched cards array
     mutating func replaceMatchedCards () {
         for index in matchedCards.indices {
             if let indexInDrawnCards = drawnCards.firstIndex(of:matchedCards[index]) {
@@ -40,12 +49,15 @@ struct SetGame {
         matchedCards.removeAll()
     } // replaceMatchingCards()
   
+    // suffle the drawn cards
     mutating func shuffleDrawnCards() {
         drawnCards.shuffle()
     } // shuffleDrawnCards()
     
-    mutating func dealThreeCards()
-    {
+    // if we have a match, we want to replace them with new cards.
+    // if we don't have a match, then we are adding three cards to the end of the drawnCards array.
+    // the penalty for adding more cards to the drawn cards array is 2 points.
+    mutating func dealThreeCards() {
         if matchedCards.count > 0 {
             replaceMatchedCards()
             return
@@ -58,16 +70,15 @@ struct SetGame {
         score += 2 // penalty for adding more cards to the board
     } // dealThreeCards()
     
-    func isSelectionASet () -> Bool  {
-        /*
-         In the set game, each card attribute must either be the same on all cards, or different on all cards.
-         In other words, you cannot have one attribute on only two cards.  One card with squares, one with
-         triangles and one with circles does not break the set. Two cards with triangles and one with squares breaks the
-         set.  Three cards with triangles does not break the set.
-         So if the count of any attribute is 2, return false.
-         */
-        
+    
+    // In the set game, each card attribute must either be the same on all cards, or different on all cards.
+    // In other words, you cannot have one attribute on only two cards.  One card with squares, one with
+    // triangles and one with circles does not break the set. Two cards with triangles and one with squares breaks the
+    // set.  Three cards with triangles does not break the set.
+    // So if the count of any attribute is 2, return false.
+    private func isSelectionASet () -> Bool  {
         if SetGame.easyMode == true { return true }  // for debugging purposes only! ;)
+        
         var shapes = [SetCard.Shape: Bool]()
         var shadings = [SetCard.Shading: Bool]()
         var pipCounts = [SetCard.PipCount: Bool]()
@@ -110,31 +121,38 @@ struct SetGame {
         if selectedCards.count == 3  {
             selectedCards.removeAll()
             selectedCards.append(drawnCards[atIndex])
-            score+=1
+            score+=Constants.selectCardPoints
             return
         }
 
         // unselect previously selected card
         if selectedCards.contains(drawnCards[atIndex]) == true {
             selectedCards.remove(at: selectedCards.firstIndex(of: drawnCards[atIndex])!)
-            score-=1
+            score-=Constants.selectCardPoints
             return
         }
         
-        score+=1
+        // add the card to selected cards, then check for a match
+        // if we do match, fill the matched cards array and empty
+        // the selected cards array
+        score+=Constants.selectCardPoints
         selectedCards.append(drawnCards[atIndex])
-        if selectedCards.count == 3 ,  isSelectionASet() == true {
-            score -= 5 // remove 5 points, 1 for each selected card and 2 more for making the set
+        if selectedCards.count == 3 {
+            if isSelectionASet() == true {
+                score -= Constants.goodMatchPoints // remove 5 points, 1 for each selected card and 2 more for making the set
             // move the selected cards into the marched cards list
             for index in selectedCards.indices {
                 matchedCards.append(selectedCards[index])
             }
             selectedCards.removeAll()
-        } else {
-            score += 2  // failed to make a set, +2 points.  So that's 1 point per selected card and 2 points for the failed set, so + 5 points on a failed set.
+            } else {
+                score += Constants.failedMatchPoints  // failed to make a set, +2 points.  So that's 1 point per selected card and 2 points for the failed set, so + 5 points on a failed set.
+            }
         }
     } // selectCard (atIndex: Int)
     
+    // starting a new game means clearing out the drawn cards, matched cards and selected cards
+    // then resetting the score and making a new deck and drawing the initial cards
     mutating func startNewGame()
     {
         drawnCards.removeAll()
@@ -142,27 +160,30 @@ struct SetGame {
         matchedCards.removeAll()
         score = 0
         gameDeck = SetDeck() // make a new deck
-        for _ in 1...12 {
+        for _ in 1...startingBoardSize {
             if let aCard = gameDeck.drawOneCard() {
                 drawnCards.append(aCard)
             }
         }
     } // startNewGame()
     
+    // return a tupple representing the attributes for the card in the drawnCards array
     func getAttributesFromCardID(cardID: Int) -> (aShape: SetCard.Shape, aShading: SetCard.Shading, aPipCount: SetCard.PipCount, aCardColor: SetCard.CardColor) {
+        assert(cardID < drawnCards.count, "Invalid cardID in getAttributesForCardID")
         return drawnCards[cardID].getCardAttributes()   
-    }
-        
+    } // getAttributesFromCardID()
+     
+    // return true of the card at index in drawnCards is also in the selectedCards array
     func isCardSelected(_ index: Int) -> Bool {
+        assert(index < drawnCards.count, "Invalid index in isCardSelected")
         return selectedCards.contains(drawnCards[index])
-    }
+    } // isCardSelected()
     
+    // return true of the card at index in drawnCards is also in the matchedCards array
     func isCardMatched(_ index: Int) -> Bool {
+        assert(index < drawnCards.count, "Invalid index in isCardMatched")
         return matchedCards.contains(drawnCards[index])
-    }
+    } // isCardMatched()
     
 } // SetGame()
 
-extension SetGame {
-    static let easyMode = true
-}

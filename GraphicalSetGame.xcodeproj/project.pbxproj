@@ -13,6 +13,8 @@
 		8E584CB623D7089A0000F9CC /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8E584CB423D7089A0000F9CC /* LaunchScreen.storyboard */; };
 		E25BED0E24BEAD5600294757 /* DiscardPileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E25BED0D24BEAD5600294757 /* DiscardPileView.swift */; };
 		E26FA3DB24BFB8CA00C6B150 /* BounceBehavior.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26FA3DA24BFB8CA00C6B150 /* BounceBehavior.swift */; };
+		E26FA3DF24C0379200C6B150 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26FA3DE24C0379200C6B150 /* Extensions.swift */; };
+		E27C531E24C7739D006765D5 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = E27C531D24C7739D006765D5 /* Constants.swift */; };
 		E2AA96B624A6CCDC007F60A6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E584CAB23D708970000F9CC /* AppDelegate.swift */; };
 		E2E0DD8C24B588EF00F4E34A /* DrawDeckView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2E0DD8B24B588EF00F4E34A /* DrawDeckView.swift */; };
 		E2E0DD8E24B58C3300F4E34A /* SetGameBoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2E0DD8D24B58C3200F4E34A /* SetGameBoardView.swift */; };
@@ -34,6 +36,8 @@
 		8E584CB723D7089A0000F9CC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E25BED0D24BEAD5600294757 /* DiscardPileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscardPileView.swift; sourceTree = "<group>"; };
 		E26FA3DA24BFB8CA00C6B150 /* BounceBehavior.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BounceBehavior.swift; sourceTree = "<group>"; };
+		E26FA3DE24C0379200C6B150 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		E27C531D24C7739D006765D5 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		E2E0DD8B24B588EF00F4E34A /* DrawDeckView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawDeckView.swift; sourceTree = "<group>"; };
 		E2E0DD8D24B58C3200F4E34A /* SetGameBoardView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SetGameBoardView.swift; sourceTree = "<group>"; };
 		E2E4EB2B24A6CF9100DBF7B0 /* SetCard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SetCard.swift; sourceTree = "<group>"; };
@@ -77,16 +81,12 @@
 			children = (
 				8E584CBD23D708DE0000F9CC /* Supporting Files */,
 				8E584CAF23D708970000F9CC /* Main.storyboard */,
-				E2E4EB3324A6CF9B00DBF7B0 /* Grid.swift */,
-				E2E4EB2B24A6CF9100DBF7B0 /* SetCard.swift */,
-				E2E4EB2F24A6CF9400DBF7B0 /* SetDeck.swift */,
-				E2E4EB2E24A6CF9300DBF7B0 /* SetGame.swift */,
-				E2E4EB3024A6CF9600DBF7B0 /* SetCardView.swift */,
-				E25BED0D24BEAD5600294757 /* DiscardPileView.swift */,
 				E2E4EB2C24A6CF9200DBF7B0 /* SetGameViewController.swift */,
-				E2E0DD8D24B58C3200F4E34A /* SetGameBoardView.swift */,
-				E2E0DD8B24B588EF00F4E34A /* DrawDeckView.swift */,
-				E26FA3DA24BFB8CA00C6B150 /* BounceBehavior.swift */,
+				E26FA3DE24C0379200C6B150 /* Extensions.swift */,
+				E27C531D24C7739D006765D5 /* Constants.swift */,
+				E2E4EB3324A6CF9B00DBF7B0 /* Grid.swift */,
+				E26FA3DD24C036BC00C6B150 /* Model */,
+				E26FA3DC24C0367300C6B150 /* View  */,
 				8E584CB723D7089A0000F9CC /* Info.plist */,
 			);
 			path = GraphicalSetGame;
@@ -100,6 +100,28 @@
 				8E584CB223D7089A0000F9CC /* Assets.xcassets */,
 			);
 			path = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		E26FA3DC24C0367300C6B150 /* View  */ = {
+			isa = PBXGroup;
+			children = (
+				E2E4EB3024A6CF9600DBF7B0 /* SetCardView.swift */,
+				E2E0DD8D24B58C3200F4E34A /* SetGameBoardView.swift */,
+				E25BED0D24BEAD5600294757 /* DiscardPileView.swift */,
+				E2E0DD8B24B588EF00F4E34A /* DrawDeckView.swift */,
+				E26FA3DA24BFB8CA00C6B150 /* BounceBehavior.swift */,
+			);
+			path = "View ";
+			sourceTree = "<group>";
+		};
+		E26FA3DD24C036BC00C6B150 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				E2E4EB2B24A6CF9100DBF7B0 /* SetCard.swift */,
+				E2E4EB2F24A6CF9400DBF7B0 /* SetDeck.swift */,
+				E2E4EB2E24A6CF9300DBF7B0 /* SetGame.swift */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -182,6 +204,8 @@
 				E2E4EB3924A6CF9C00DBF7B0 /* SetCardView.swift in Sources */,
 				E2E0DD8E24B58C3300F4E34A /* SetGameBoardView.swift in Sources */,
 				E2E4EB3C24A6CF9C00DBF7B0 /* Grid.swift in Sources */,
+				E27C531E24C7739D006765D5 /* Constants.swift in Sources */,
+				E26FA3DF24C0379200C6B150 /* Extensions.swift in Sources */,
 				E2E4EB3724A6CF9C00DBF7B0 /* SetGame.swift in Sources */,
 				E2AA96B624A6CCDC007F60A6 /* AppDelegate.swift in Sources */,
 				E2E4EB3824A6CF9C00DBF7B0 /* SetDeck.swift in Sources */,
